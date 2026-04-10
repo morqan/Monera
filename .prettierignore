@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+.cursor
+
+# Build & test output
+build
+dist
+coverage
+
+# React Native — Android
+android/app/build
+android/build
+android/.gradle
+
+# React Native — iOS
+ios/build
+ios/Pods
+
+# Bundler / Ruby (RN iOS)
+vendor/bundle
+
+# Logs & caches
+*.log
+.cache
+
+# OS
+.DS_Store

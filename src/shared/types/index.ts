@@ -1,0 +1,5 @@
+/**
+ * Cross-cutting TypeScript types shared across layers.
+ */
+
+export {};
