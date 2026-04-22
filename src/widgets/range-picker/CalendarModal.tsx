@@ -1,9 +1,16 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
 import { Calendar, type DateData } from 'react-native-calendars';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { theme, type AppColors } from '@/app/styles/theme';
+import { getGlassPanelShadow, theme, type AppColors } from '@/app/styles/theme';
 import { useTranslation } from '@/shared/i18n';
 import { customRange, todayISODate, type DateRange } from '@/shared/lib';
 
@@ -23,6 +30,8 @@ export function CalendarModal({
   onApply,
 }: Props) {
   const { t } = useTranslation();
+  const isDark = useColorScheme() === 'dark';
+  const shadow = getGlassPanelShadow(isDark);
   const [start, setStart] = useState<string>(initial.start);
   const [end, setEnd] = useState<string>(initial.end);
 
@@ -34,11 +43,9 @@ export function CalendarModal({
     const cursor = new Date(loDate);
     while (cursor <= hiDate) {
       const iso = cursor.toISOString().slice(0, 10);
-      const isStart = iso === lo;
-      const isEnd = iso === hi;
       marks[iso] = {
-        startingDay: isStart,
-        endingDay: isEnd,
+        startingDay: iso === lo,
+        endingDay: iso === hi,
         color: colors.accent,
         textColor: colors.onAccent,
       };
@@ -87,63 +94,95 @@ export function CalendarModal({
     [colors]
   );
 
+  const renderArrow = (direction: 'left' | 'right') => {
+    const Icon = direction === 'left' ? ChevronLeft : ChevronRight;
+    return <Icon size={18} color={colors.accent} strokeWidth={1.75} />;
+  };
+
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       transparent
       onRequestClose={onClose}
     >
-      <Pressable style={styles.backdrop} onPress={onClose} />
-      <SafeAreaView
-        style={[
-          styles.sheet,
-          {
-            backgroundColor: colors.background,
-            borderColor: colors.border,
-          },
-        ]}
-        edges={['bottom']}
-      >
-        <View style={styles.header}>
-          <Pressable onPress={onClose} hitSlop={10}>
-            <Text style={[styles.cancel, { color: colors.secondaryLabel }]}>
-              {t('common.cancel')}
+      <Pressable style={styles.backdrop} onPress={onClose}>
+        <Pressable
+          onPress={(e) => e.stopPropagation()}
+          style={[
+            styles.sheet,
+            shadow,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+            },
+          ]}
+        >
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: colors.label }]}>
+              {t('transactions.calendarTitle')}
             </Text>
-          </Pressable>
-          <Text style={[styles.title, { color: colors.label }]}>
-            {t('transactions.calendarTitle')}
-          </Text>
-          <Pressable onPress={handleApply} hitSlop={10}>
-            <Text style={[styles.apply, { color: colors.accent }]}>
-              {t('transactions.calendarApply')}
+          </View>
+          <View style={styles.rangeRow}>
+            <RangeCell
+              label={t('transactions.calendarStart')}
+              value={start}
+              colors={colors}
+            />
+            <Text style={[styles.dash, { color: colors.tertiaryLabel }]}>
+              –
             </Text>
-          </Pressable>
-        </View>
-        <View style={styles.rangeRow}>
-          <RangeCell
-            label={t('transactions.calendarStart')}
-            value={start}
-            colors={colors}
+            <RangeCell
+              label={t('transactions.calendarEnd')}
+              value={end}
+              colors={colors}
+            />
+          </View>
+          <Calendar
+            current={start}
+            maxDate={todayISODate()}
+            markingType="period"
+            markedDates={markedDates}
+            onDayPress={handleDayPress}
+            firstDay={1}
+            theme={calendarTheme}
+            renderArrow={renderArrow}
+            style={styles.calendar}
           />
-          <Text style={[styles.dash, { color: colors.tertiaryLabel }]}>–</Text>
-          <RangeCell
-            label={t('transactions.calendarEnd')}
-            value={end}
-            colors={colors}
-          />
-        </View>
-        <Calendar
-          current={start}
-          maxDate={todayISODate()}
-          markingType="period"
-          markedDates={markedDates}
-          onDayPress={handleDayPress}
-          firstDay={1}
-          theme={calendarTheme}
-          style={styles.calendar}
-        />
-      </SafeAreaView>
+          <View style={styles.actions}>
+            <Pressable
+              onPress={onClose}
+              style={({ pressed }) => [
+                styles.actionBtn,
+                styles.ghostBtn,
+                {
+                  backgroundColor: colors.fill,
+                  borderColor: colors.border,
+                  opacity: pressed ? 0.75 : 1,
+                },
+              ]}
+            >
+              <Text style={[styles.actionLabel, { color: colors.label }]}>
+                {t('common.cancel')}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={handleApply}
+              style={({ pressed }) => [
+                styles.actionBtn,
+                {
+                  backgroundColor: colors.accent,
+                  opacity: pressed ? 0.88 : 1,
+                },
+              ]}
+            >
+              <Text style={[styles.actionLabel, { color: colors.onAccent }]}>
+                {t('transactions.calendarApply')}
+              </Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
@@ -170,38 +209,32 @@ function RangeCell({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.space.lg,
   },
   sheet: {
-    borderTopLeftRadius: theme.radius.card,
-    borderTopRightRadius: theme.radius.card,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    paddingBottom: theme.space.sm,
+    width: '100%',
+    maxWidth: 380,
+    borderRadius: theme.radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: theme.space.md,
+    paddingTop: theme.space.md,
+    paddingBottom: theme.space.md,
   },
   header: {
-    flexDirection: 'row',
+    paddingBottom: theme.space.sm,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: theme.space.md,
-    paddingVertical: theme.space.md,
   },
   title: {
     fontSize: 15,
     fontWeight: '600',
     letterSpacing: -0.2,
   },
-  cancel: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  apply: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
   rangeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: theme.space.md,
     paddingBottom: theme.space.sm,
     gap: theme.space.sm,
   },
@@ -209,7 +242,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rangeLabel: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.4,
@@ -222,9 +255,30 @@ const styles = StyleSheet.create({
   },
   dash: {
     fontSize: 16,
-    marginTop: 14,
+    marginTop: 12,
   },
   calendar: {
-    paddingBottom: theme.space.md,
+    paddingBottom: theme.space.sm,
+    marginHorizontal: -theme.space.xs,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: theme.space.sm,
+    marginTop: theme.space.sm,
+  },
+  actionBtn: {
+    flex: 1,
+    minHeight: 40,
+    borderRadius: theme.radius.button,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ghostBtn: {
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  actionLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: -0.1,
   },
 });
