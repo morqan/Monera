@@ -9,7 +9,7 @@ import {
 import { getGlassRowShadow, theme, type AppColors } from '@/app/styles/theme';
 import { useCategoryName, type Category } from '@/entities/category';
 import { hexToRgba } from '@/shared/lib';
-import { GlassSurface } from '@/shared/ui';
+import { CategoryIcon, GlassSurface } from '@/shared/ui';
 
 type Props = {
   category: Category;
@@ -57,7 +57,7 @@ export function CategoryTile({
               { backgroundColor: hexToRgba(accent, isDark ? 0.18 : 0.12) },
             ]}
           >
-            <Text style={styles.iconGlyph}>{category.icon ?? '•'}</Text>
+            <CategoryIcon icon={category.icon} size={20} color={accent} />
           </View>
           <Text
             style={[styles.name, { color: colors.label }]}
@@ -111,9 +111,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  iconGlyph: {
-    fontSize: 20,
   },
   name: {
     fontSize: 13,

@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAppColors, theme } from '@/app/styles/theme';
 import type { TransactionKind } from '@/entities/transaction';
 import { useTranslation } from '@/shared/i18n';
-import { GlassBackground } from '@/shared/ui';
+import { CategoryIcon, GlassBackground } from '@/shared/ui';
 
 import { COLOR_PRESETS, ICON_PRESETS } from './lib/presets';
 import { useEditCategory } from './model/useEditCategory';
@@ -104,14 +104,11 @@ export function EditCategoryPage() {
                       },
                     ]}
                   >
-                    <Text
-                      style={[
-                        styles.iconGlyph,
-                        { color: active ? colors.onAccent : colors.label },
-                      ]}
-                    >
-                      {g}
-                    </Text>
+                    <CategoryIcon
+                      icon={g}
+                      size={18}
+                      color={active ? colors.onAccent : colors.label}
+                    />
                   </Pressable>
                 );
               })}
@@ -287,9 +284,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-  },
-  iconGlyph: {
-    fontSize: 20,
   },
   colorRow: {
     flexDirection: 'row',

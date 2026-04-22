@@ -6,7 +6,7 @@ export const defaultIncomeCategories: Category[] = [
     name: 'Зарплата',
     kind: 'income',
     localeKey: 'salary',
-    icon: '💼',
+    icon: 'Briefcase',
     color: '#3DFFB4',
   },
   {
@@ -14,7 +14,7 @@ export const defaultIncomeCategories: Category[] = [
     name: 'Премия',
     kind: 'income',
     localeKey: 'bonus',
-    icon: '🎉',
+    icon: 'PartyPopper',
     color: '#FFC857',
   },
   {
@@ -22,7 +22,7 @@ export const defaultIncomeCategories: Category[] = [
     name: 'Фриланс',
     kind: 'income',
     localeKey: 'freelance',
-    icon: '🧑‍💻',
+    icon: 'Laptop',
     color: '#00D4FF',
   },
   {
@@ -30,7 +30,7 @@ export const defaultIncomeCategories: Category[] = [
     name: 'Инвестиции',
     kind: 'income',
     localeKey: 'invest',
-    icon: '📈',
+    icon: 'TrendingUp',
     color: '#7CF6A7',
   },
   {
@@ -38,7 +38,7 @@ export const defaultIncomeCategories: Category[] = [
     name: 'Подарок',
     kind: 'income',
     localeKey: 'gift',
-    icon: '🎁',
+    icon: 'Gift',
     color: '#FF9FD1',
   },
   {
@@ -46,7 +46,7 @@ export const defaultIncomeCategories: Category[] = [
     name: 'Другое',
     kind: 'income',
     localeKey: 'otherIncome',
-    icon: '✨',
+    icon: 'Sparkles',
     color: '#B6FFF9',
   },
 ];
@@ -57,7 +57,7 @@ export const defaultExpenseCategories: Category[] = [
     name: 'Продукты',
     kind: 'expense',
     localeKey: 'food',
-    icon: '🛒',
+    icon: 'ShoppingCart',
     color: '#FFB86B',
   },
   {
@@ -65,7 +65,7 @@ export const defaultExpenseCategories: Category[] = [
     name: 'Дом',
     kind: 'expense',
     localeKey: 'home',
-    icon: '🏠',
+    icon: 'Home',
     color: '#9FD8FF',
   },
   {
@@ -73,7 +73,7 @@ export const defaultExpenseCategories: Category[] = [
     name: 'Транспорт',
     kind: 'expense',
     localeKey: 'transport',
-    icon: '🚌',
+    icon: 'Bus',
     color: '#C2A0FF',
   },
   {
@@ -81,7 +81,7 @@ export const defaultExpenseCategories: Category[] = [
     name: 'Здоровье',
     kind: 'expense',
     localeKey: 'health',
-    icon: '💊',
+    icon: 'Pill',
     color: '#FF6BA3',
   },
   {
@@ -89,7 +89,7 @@ export const defaultExpenseCategories: Category[] = [
     name: 'Досуг',
     kind: 'expense',
     localeKey: 'leisure',
-    icon: '🎮',
+    icon: 'Gamepad2',
     color: '#FFE066',
   },
   {
@@ -97,7 +97,7 @@ export const defaultExpenseCategories: Category[] = [
     name: 'Подписки',
     kind: 'expense',
     localeKey: 'subscriptions',
-    icon: '🔁',
+    icon: 'RefreshCw',
     color: '#64FFE1',
   },
   {
@@ -105,7 +105,7 @@ export const defaultExpenseCategories: Category[] = [
     name: 'Другое',
     kind: 'expense',
     localeKey: 'otherExpense',
-    icon: '•••',
+    icon: 'MoreHorizontal',
     color: '#C8D4FF',
   },
 ];

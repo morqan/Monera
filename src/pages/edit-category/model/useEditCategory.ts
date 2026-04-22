@@ -56,7 +56,7 @@ export function useEditCategory() {
 
   const [name, setName] = useState('');
   const [kind, setKind] = useState<TransactionKind>(defaultKind);
-  const [icon, setIcon] = useState(ICON_PRESETS[0]);
+  const [icon, setIcon] = useState<string>(ICON_PRESETS[0]);
   const [color, setColor] = useState(COLOR_PRESETS[0]);
 
   const appliedSeedKey = useRef<string | null>(null);

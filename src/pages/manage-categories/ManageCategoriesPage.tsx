@@ -23,7 +23,7 @@ import {
 import { useCategoryName, type Category } from '@/entities/category';
 import { useTranslation } from '@/shared/i18n';
 import { hexToRgba } from '@/shared/lib';
-import { GlassBackground, GlassSurface } from '@/shared/ui';
+import { CategoryIcon, GlassBackground, GlassSurface } from '@/shared/ui';
 
 type Section = {
   title: string;
@@ -135,7 +135,7 @@ function CategoryRowItem({
             { backgroundColor: hexToRgba(accent, 0.14) },
           ]}
         >
-          <Text style={styles.iconGlyph}>{category.icon ?? '•'}</Text>
+          <CategoryIcon icon={category.icon} size={18} color={accent} />
         </View>
         <Text
           style={[styles.rowLabel, { color: colors.label }]}
@@ -188,7 +188,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconGlyph: { fontSize: 18 },
   rowLabel: {
     flex: 1,
     fontSize: 15,
