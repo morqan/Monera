@@ -8,6 +8,7 @@ export const defaultSettings: Settings = {
   currencyCode: 'RUB',
   locale: deviceLocale ?? DEFAULT_LOCALE,
   theme: 'system',
+  notificationsEnabled: false,
 };
 
 const settingsSlice = createSlice({

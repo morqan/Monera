@@ -4,6 +4,7 @@ export {
   deleteByCategory,
   deleteTransaction,
   hydrateTransactions,
+  mergeTransactions,
   reassignCategory,
   transactionsReducer,
   updateTransaction,

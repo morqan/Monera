@@ -17,6 +17,7 @@ import { AmountField } from './ui/AmountField';
 import { CategoryChips } from './ui/CategoryChips';
 import { DateStepperRow } from './ui/DateStepperRow';
 import { KindSegment } from './ui/KindSegment';
+import { ReceiptField } from './ui/ReceiptField';
 import { SaveFooter } from './ui/SaveFooter';
 
 export function CreateTransactionPage() {
@@ -130,6 +131,22 @@ export function CreateTransactionPage() {
               style={[createTransactionStyles.note, { color: colors.label }]}
             />
           </View>
+
+          <Text
+            style={[
+              createTransactionStyles.fieldLabel,
+              { color: colors.tertiaryLabel },
+            ]}
+          >
+            {t('create.receipt')}
+          </Text>
+          <ReceiptField
+            attachmentUri={ctx.attachmentUri}
+            onCapture={ctx.captureAttachment}
+            onPick={ctx.pickAttachment}
+            onRemove={ctx.removeAttachment}
+            colors={colors}
+          />
         </ScrollView>
 
         <SaveFooter

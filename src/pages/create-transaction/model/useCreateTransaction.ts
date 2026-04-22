@@ -23,7 +23,12 @@ import {
   type TransactionKind,
 } from '@/entities/transaction';
 import { useTranslation } from '@/shared/i18n';
-import { createId } from '@/shared/lib';
+import {
+  captureReceiptFromCamera,
+  createId,
+  pickReceiptFromLibrary,
+  removeReceiptFile,
+} from '@/shared/lib';
 
 import {
   addDays,
@@ -86,6 +91,12 @@ export function useCreateTransaction() {
   const [categoryId, setCategoryId] = useState('');
   const [date, setDate] = useState(() => startOfLocalDay(new Date()));
   const [note, setNote] = useState('');
+  const [attachmentUri, setAttachmentUri] = useState<string | undefined>(
+    undefined
+  );
+
+  const newIdRef = useRef<string>(createId());
+  const originalAttachmentRef = useRef<string | undefined>(undefined);
 
   const resolvedRef = useRef(resolved);
   resolvedRef.current = resolved;
@@ -98,11 +109,14 @@ export function useCreateTransaction() {
     appliedSeedKey.current = seedKey;
 
     if (seedKey === 'create') {
+      newIdRef.current = createId();
+      originalAttachmentRef.current = undefined;
       setKind('expense');
       setAmountText('');
       setCategoryId('');
       setDate(startOfLocalDay(new Date()));
       setNote('');
+      setAttachmentUri(undefined);
       return;
     }
 
@@ -114,11 +128,19 @@ export function useCreateTransaction() {
     if (!isDup && tx.id !== seedKey) {
       return;
     }
+    if (isDup) {
+      newIdRef.current = createId();
+      originalAttachmentRef.current = undefined;
+    } else {
+      newIdRef.current = tx.id;
+      originalAttachmentRef.current = tx.attachmentUri;
+    }
     setKind(tx.kind);
     setAmountText(String(tx.amount));
     setCategoryId(tx.categoryId);
     setDate(isDup ? startOfLocalDay(new Date()) : parseISODateOnly(tx.date));
     setNote(tx.note);
+    setAttachmentUri(isDup ? undefined : tx.attachmentUri);
   }, [seedKey]);
 
   const filtered = useMemo(
@@ -141,12 +163,49 @@ export function useCreateTransaction() {
   const amount = parseAmount(amountText);
   const canSave = amount != null && amount > 0 && categoryId.length > 0;
 
+  const captureAttachment = useCallback(async () => {
+    const uri = await captureReceiptFromCamera(newIdRef.current);
+    if (uri) {
+      setAttachmentUri((prev) => {
+        if (prev && prev !== uri && prev !== originalAttachmentRef.current) {
+          void removeReceiptFile(prev);
+        }
+        return uri;
+      });
+    }
+  }, []);
+
+  const pickAttachment = useCallback(async () => {
+    const uri = await pickReceiptFromLibrary(newIdRef.current);
+    if (uri) {
+      setAttachmentUri((prev) => {
+        if (prev && prev !== uri && prev !== originalAttachmentRef.current) {
+          void removeReceiptFile(prev);
+        }
+        return uri;
+      });
+    }
+  }, []);
+
+  const removeAttachment = useCallback(() => {
+    setAttachmentUri((prev) => {
+      if (prev && prev !== originalAttachmentRef.current) {
+        void removeReceiptFile(prev);
+      }
+      return undefined;
+    });
+  }, []);
+
   const save = () => {
     if (!canSave || amount == null) {
       return;
     }
+    const original = originalAttachmentRef.current;
     if (isEdit && resolved) {
       const base = items.find((tx) => tx.id === resolved.id) ?? resolved;
+      if (original && original !== attachmentUri) {
+        void removeReceiptFile(original);
+      }
       dispatch(
         updateTransaction({
           ...base,
@@ -155,18 +214,20 @@ export function useCreateTransaction() {
           categoryId,
           date: toISODateOnly(date),
           note: note.trim(),
+          attachmentUri,
         })
       );
     } else {
       dispatch(
         addTransaction({
-          id: createId(),
+          id: newIdRef.current,
           kind,
           amount,
           categoryId,
           date: toISODateOnly(date),
           note: note.trim(),
           createdAt: new Date().toISOString(),
+          attachmentUri,
         })
       );
     }
@@ -178,6 +239,7 @@ export function useCreateTransaction() {
       return;
     }
     const id = resolved.id;
+    const toCleanup = resolved.attachmentUri;
     Alert.alert(
       t('create.confirmDeleteTitle'),
       t('create.confirmDeleteMessage'),
@@ -187,6 +249,9 @@ export function useCreateTransaction() {
           text: t('common.delete'),
           style: 'destructive',
           onPress: () => {
+            if (toCleanup) {
+              void removeReceiptFile(toCleanup);
+            }
             dispatch(deleteTransaction(id));
             navigation.goBack();
           },
@@ -214,5 +279,9 @@ export function useCreateTransaction() {
     save,
     isEdit,
     onDelete: isEdit ? confirmAndRemove : undefined,
+    attachmentUri,
+    captureAttachment,
+    pickAttachment,
+    removeAttachment,
   };
 }

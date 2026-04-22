@@ -1,5 +1,6 @@
 import type { BudgetsState } from '@/entities/budget';
 import type { CategoriesState } from '@/entities/category';
+import type { NotificationsState } from '@/entities/notifications';
 import type { SecurityState } from '@/entities/security';
 import type { Settings } from '@/entities/settings';
 import type { TransactionsState } from '@/entities/transaction';
@@ -13,6 +14,7 @@ export type PersistedSlices = {
   budgets: BudgetsState;
   settings: Settings;
   security: SecurityState;
+  notifications: NotificationsState;
 };
 
 export async function persistRootState(state: PersistedSlices): Promise<void> {
@@ -29,5 +31,6 @@ export async function persistRootState(state: PersistedSlices): Promise<void> {
       pinSalt: state.security.pinSalt,
       biometricsEnabled: state.security.biometricsEnabled,
     }),
+    saveJson(STORAGE_KEYS.notifications, state.notifications),
   ]);
 }

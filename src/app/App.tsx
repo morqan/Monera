@@ -9,10 +9,16 @@ import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppLockGate } from '@/features/app-lock';
+import { useBudgetWatcher } from '@/features/budget-watcher';
 
 import { getAppColors } from './styles/theme';
 import { AppProviders } from './providers';
 import { RootNavigator } from './navigation';
+
+function Content() {
+  useBudgetWatcher();
+  return <RootNavigator />;
+}
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -26,7 +32,7 @@ function App() {
           style={[styles.root, { backgroundColor: colors.groupedBackground }]}
         >
           <AppLockGate>
-            <RootNavigator />
+            <Content />
           </AppLockGate>
         </View>
       </SafeAreaProvider>

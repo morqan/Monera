@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import { budgetsReducer } from '@/entities/budget';
 import { categoriesReducer } from '@/entities/category';
+import { notificationsReducer } from '@/entities/notifications';
 import { securityReducer } from '@/entities/security';
 import { sessionReducer } from '@/entities/session';
 import { settingsReducer } from '@/entities/settings';
@@ -26,6 +27,7 @@ export const store = configureStore({
     settings: settingsReducer,
     session: sessionReducer,
     security: securityReducer,
+    notifications: notificationsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(baseApi.middleware),
@@ -41,6 +43,7 @@ store.subscribe(() => {
     budgets: store.getState().budgets,
     settings: store.getState().settings,
     security: store.getState().security,
+    notifications: store.getState().notifications,
   }).catch(() => {
     /* persistence failures are non-fatal */
   });

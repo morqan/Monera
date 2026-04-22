@@ -7,6 +7,10 @@ import {
   migrateCategoryIcons,
   type Category,
 } from '@/entities/category';
+import {
+  hydrateNotifications,
+  type NotificationsState,
+} from '@/entities/notifications';
 import { hydrateSecurity, type SecurityPersisted } from '@/entities/security';
 import {
   defaultSettings,
@@ -21,8 +25,8 @@ import type { SessionUser } from '@/shared/types/sessionUser';
 export const bootstrapApp = createAsyncThunk(
   'app/bootstrap',
   async (_, { dispatch }) => {
-    const [tx, cat, budgetsRaw, set, sessionUser, security] = await Promise.all(
-      [
+    const [tx, cat, budgetsRaw, set, sessionUser, security, notifications] =
+      await Promise.all([
         loadJson<Transaction[]>(STORAGE_KEYS.transactions),
         loadJson<Category[]>(STORAGE_KEYS.categories),
         loadJson<Budget[] | { items: Budget[]; monthlyLimit: number | null }>(
@@ -31,8 +35,8 @@ export const bootstrapApp = createAsyncThunk(
         loadJson<Settings>(STORAGE_KEYS.settings),
         loadJson<SessionUser>(STORAGE_KEYS.sessionUser),
         loadJson<SecurityPersisted>(STORAGE_KEYS.security),
-      ]
-    );
+        loadJson<NotificationsState>(STORAGE_KEYS.notifications),
+      ]);
 
     const budgets = Array.isArray(budgetsRaw)
       ? { items: budgetsRaw, monthlyLimit: null }
@@ -60,6 +64,11 @@ export const bootstrapApp = createAsyncThunk(
           pinSalt: null,
           biometricsEnabled: false,
         }
+      )
+    );
+    dispatch(
+      hydrateNotifications(
+        notifications ?? { lastFiredByCategory: {}, lastFiredGlobal: null }
       )
     );
   }

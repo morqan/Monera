@@ -8,4 +8,5 @@ export type Transaction = {
   date: string;
   note: string;
   createdAt: string;
+  attachmentUri?: string;
 };

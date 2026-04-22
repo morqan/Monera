@@ -30,6 +30,11 @@ const transactionsSlice = createSlice({
     deleteTransaction(state, action: PayloadAction<string>) {
       state.items = state.items.filter((t) => t.id !== action.payload);
     },
+    mergeTransactions(state, action: PayloadAction<Transaction[]>) {
+      const existingIds = new Set(state.items.map((t) => t.id));
+      const fresh = action.payload.filter((t) => !existingIds.has(t.id));
+      state.items = [...fresh, ...state.items];
+    },
     reassignCategory(
       state,
       action: PayloadAction<{ fromCategoryId: string; toCategoryId: string }>
@@ -50,6 +55,7 @@ export const {
   addTransaction,
   updateTransaction,
   deleteTransaction,
+  mergeTransactions,
   reassignCategory,
   deleteByCategory,
 } = transactionsSlice.actions;

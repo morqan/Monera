@@ -74,6 +74,14 @@ export const ru = {
     confirmDeleteTitle: 'Удалить операцию?',
     confirmDeleteMessage:
       'Запись будет удалена без возможности восстановления.',
+    receipt: 'Чек',
+    receiptAdd: 'Добавить фото чека',
+    receiptMenuTitle: 'Фото чека',
+    receiptCamera: 'Сфотографировать',
+    receiptLibrary: 'Выбрать из галереи',
+    receiptReplace: 'Заменить фото',
+    receiptRemove: 'Удалить фото',
+    receiptPreviewTitle: 'Фото чека',
   },
   settings: {
     title: 'Настройки',
@@ -93,6 +101,8 @@ export const ru = {
     exportJson: 'Экспорт в JSON',
     exportCsv: 'Экспорт в CSV',
     exportError: 'Не удалось экспортировать данные.',
+    importTitle: 'Импорт',
+    importOpen: 'Импорт из JSON или CSV',
     security: 'Безопасность',
     pinLock: 'PIN-код',
     pinChange: 'Сменить PIN-код',
@@ -104,6 +114,12 @@ export const ru = {
     biometryNone: 'Биометрия',
     biometryUnavailable: 'Биометрия недоступна на этом устройстве.',
     biometryNeedsPin: 'Сначала включите PIN-код.',
+    notifications: 'Уведомления',
+    notificationsBudget: 'Превышение бюджета',
+    notificationsBudgetHint:
+      'Пушите уведомление, когда расходы превышают бюджет категории или общий лимит за месяц.',
+    notificationsDenied:
+      'Разрешение на уведомления отклонено. Включите его в настройках устройства.',
   },
   categories: {
     salary: 'Зарплата',
@@ -119,6 +135,29 @@ export const ru = {
     leisure: 'Досуг',
     subscriptions: 'Подписки',
     otherExpense: 'Другое',
+  },
+  import: {
+    title: 'Импорт данных',
+    hint: 'Вставьте JSON (результат экспорта) или CSV с колонками id, date, kind, amount, category, note, createdAt.',
+    placeholder: 'Вставьте сюда содержимое экспорта…',
+    apply: 'Импортировать',
+    applyWithCount: 'Импортировать {{count}}',
+    summaryFormat: 'Формат: {{format}}',
+    summaryAdd: 'Будет добавлено: {{count}}',
+    summaryDuplicates: 'Пропущено дубликатов: {{count}}',
+    summarySkipped: 'Некорректных строк: {{count}}',
+    error: {
+      invalidJson: 'Не удалось разобрать JSON.',
+      missingColumns: 'В CSV отсутствуют обязательные колонки.',
+      empty: 'В данных нет операций.',
+      generic: 'Не удалось разобрать данные.',
+    },
+  },
+  notifications: {
+    categoryTitle: 'Бюджет «{{category}}» превышен',
+    categoryBody: 'Перерасход {{over}} сверх лимита {{limit}}.',
+    globalTitle: 'Месячный бюджет превышен',
+    globalBody: 'Перерасход {{over}} сверх лимита {{limit}}.',
   },
   lock: {
     title: 'Monera заблокирована',

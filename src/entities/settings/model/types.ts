@@ -6,4 +6,5 @@ export type Settings = {
   currencyCode: string;
   locale: AppLocale;
   theme: ThemePreference;
+  notificationsEnabled: boolean;
 };

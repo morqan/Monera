@@ -33,10 +33,14 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Monera использует камеру для прикрепления фото чеков к операциям.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Monera использует Face ID для разблокировки приложения.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Monera добавляет фото чеков из вашей библиотеки к операциям.</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

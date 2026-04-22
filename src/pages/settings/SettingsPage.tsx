@@ -16,11 +16,13 @@ import { setMonthlyLimit } from '@/entities/budget';
 import { clearPin, setBiometricsEnabled } from '@/entities/security';
 import { patchSettings, type ThemePreference } from '@/entities/settings';
 import { SetupPinModal } from '@/features/app-lock';
+import { ImportDataModal } from '@/features/import-data';
 import { useTranslation, type AppLocale } from '@/shared/i18n';
 import {
   buildCsvExport,
   buildJsonExport,
   getBiometryKind,
+  requestNotificationPermission,
   SUPPORTED_CURRENCIES,
   type BiometryKind,
 } from '@/shared/lib';
@@ -61,9 +63,13 @@ export function SettingsPage() {
   const monthlyLimit = useAppSelector((s) => s.budgets.monthlyLimit);
   const pinHash = useAppSelector((s) => s.security.pinHash);
   const biometricsEnabled = useAppSelector((s) => s.security.biometricsEnabled);
+  const notificationsEnabled = useAppSelector(
+    (s) => s.settings.notificationsEnabled
+  );
 
   const [biometryKind, setBiometryKind] = useState<BiometryKind>('none');
   const [setupOpen, setSetupOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -118,6 +124,19 @@ export function SettingsPage() {
       return;
     }
     dispatch(setMonthlyLimit(Math.round(parsed * 100) / 100));
+  };
+
+  const handleNotificationsToggle = async (next: boolean) => {
+    if (!next) {
+      dispatch(patchSettings({ notificationsEnabled: false }));
+      return;
+    }
+    const granted = await requestNotificationPermission();
+    if (!granted) {
+      Alert.alert(t('settings.notificationsDenied'));
+      return;
+    }
+    dispatch(patchSettings({ notificationsEnabled: true }));
   };
 
   const shareExport = async (payload: string) => {
@@ -253,6 +272,20 @@ export function SettingsPage() {
         <SettingsRowGroup
           colors={colors}
           shadow={panel}
+          title={t('settings.notifications')}
+        >
+          <SettingsToggleRow
+            colors={colors}
+            label={t('settings.notificationsBudget')}
+            value={notificationsEnabled}
+            onChange={handleNotificationsToggle}
+            caption={t('settings.notificationsBudgetHint')}
+          />
+        </SettingsRowGroup>
+
+        <SettingsRowGroup
+          colors={colors}
+          shadow={panel}
           title={t('settings.theme')}
         >
           <SettingsSelectRow
@@ -283,6 +316,18 @@ export function SettingsPage() {
           />
         </SettingsRowGroup>
 
+        <SettingsRowGroup
+          colors={colors}
+          shadow={panel}
+          title={t('settings.importTitle')}
+        >
+          <SettingsActionRow
+            colors={colors}
+            label={t('settings.importOpen')}
+            onPress={() => setImportOpen(true)}
+          />
+        </SettingsRowGroup>
+
         <View style={styles.footer}>
           <Text style={[styles.footerText, { color: colors.tertiaryLabel }]}>
             {t('settings.about')} · {t('settings.version')} 0.1
@@ -293,6 +338,10 @@ export function SettingsPage() {
         visible={setupOpen}
         onClose={() => setSetupOpen(false)}
         onDone={() => setSetupOpen(false)}
+      />
+      <ImportDataModal
+        visible={importOpen}
+        onClose={() => setImportOpen(false)}
       />
     </SafeAreaView>
   );
