@@ -4,6 +4,8 @@
 
 export { hexToRgba } from './color';
 export { createId } from './createId';
+export { buildCsvExport, buildJsonExport } from './exportData';
+export type { ExportBundle } from './exportData';
 export {
   currentRange,
   customRange,

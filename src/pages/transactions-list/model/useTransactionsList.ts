@@ -78,6 +78,7 @@ export function useTransactionsList() {
   const getName = useCategoryName();
   const [filter, setFilter] = useState<TransactionsFilter>('all');
   const [range, setRange] = useState<DateRange>(() => currentRange('month'));
+  const [query, setQuery] = useState('');
 
   const rangeItems = useMemo(
     () => items.filter((t) => rangeContainsISO(range, t.date)),
@@ -119,12 +120,29 @@ export function useTransactionsList() {
   }, [rangeItems, categories, getName]);
 
   const filteredRows = useMemo(() => {
-    if (filter === 'all') {
-      return rows;
+    const byKind =
+      filter === 'all'
+        ? rows
+        : rows.filter((row) => row.transaction.kind === filter);
+
+    const trimmed = query.trim().toLowerCase();
+    if (trimmed.length === 0) {
+      return byKind;
     }
 
-    return rows.filter((row) => row.transaction.kind === filter);
-  }, [filter, rows]);
+    const amountTerm = Number(trimmed.replace(',', '.'));
+    const amountMatch = Number.isFinite(amountTerm) && amountTerm > 0;
+
+    return byKind.filter((row) => {
+      const note = row.transaction.note?.toLowerCase() ?? '';
+      if (note.includes(trimmed)) return true;
+      if (row.categoryName.toLowerCase().includes(trimmed)) return true;
+      if (amountMatch) {
+        return Math.abs(row.transaction.amount - amountTerm) < 0.005;
+      }
+      return false;
+    });
+  }, [filter, rows, query]);
 
   const sections = useMemo<TransactionSection[]>(() => {
     const grouped = new Map<string, TransactionRow[]>();
@@ -167,6 +185,7 @@ export function useTransactionsList() {
     hasRangeTransactions: rangeItems.length > 0,
     isFilteredEmpty: rangeItems.length > 0 && filteredRows.length === 0,
     locale,
+    query,
     range,
     rangeTotals,
     next,
@@ -177,6 +196,7 @@ export function useTransactionsList() {
     sections,
     setFilter,
     setPreset,
+    setQuery,
     setRange,
   };
 }

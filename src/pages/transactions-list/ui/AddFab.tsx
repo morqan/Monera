@@ -2,6 +2,7 @@ import { Plus } from 'lucide-react-native';
 import { Pressable, useColorScheme } from 'react-native';
 
 import { getGlassFabShadow, type AppColors } from '@/app/styles/theme';
+import { useTranslation } from '@/shared/i18n';
 
 import { transactionsListStyles } from '../styles';
 
@@ -13,6 +14,7 @@ type Props = {
 export function AddFab({ colors, onPress }: Props) {
   const isDark = useColorScheme() === 'dark';
   const fabShadow = getGlassFabShadow(isDark);
+  const { t } = useTranslation();
 
   return (
     <Pressable
@@ -28,7 +30,7 @@ export function AddFab({ colors, onPress }: Props) {
         },
       ]}
       accessibilityRole="button"
-      accessibilityLabel="Добавить операцию"
+      accessibilityLabel={t('create.titleNew')}
     >
       <Plus size={24} color={colors.onAccent} strokeWidth={2} />
     </Pressable>

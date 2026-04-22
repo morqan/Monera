@@ -31,4 +31,5 @@ export type RootStackParamList = {
   Settings: undefined;
   EditCategory: EditCategoryScreenParams | undefined;
   ManageCategories: undefined;
+  Insights: undefined;
 };

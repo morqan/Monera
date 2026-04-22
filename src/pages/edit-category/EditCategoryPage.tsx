@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,19 +12,27 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAppSelector } from '@/app/store';
 import { getAppColors, theme } from '@/app/styles/theme';
 import type { TransactionKind } from '@/entities/transaction';
 import { useTranslation } from '@/shared/i18n';
 import { CategoryIcon, GlassBackground } from '@/shared/ui';
 
-import { COLOR_PRESETS, ICON_PRESETS } from './lib/presets';
+import { COLOR_PRESETS, ICON_GROUPS } from './lib/presets';
 import { useEditCategory } from './model/useEditCategory';
+
+const ICON_COLUMNS = 6;
+const COLOR_COLUMNS = 8;
+const ICON_SLOT_WIDTH = `${100 / ICON_COLUMNS}%` as const;
+const COLOR_SLOT_WIDTH = `${100 / COLOR_COLUMNS}%` as const;
 
 export function EditCategoryPage() {
   const scheme = useColorScheme();
   const colors = getAppColors(scheme === 'dark');
   const { t } = useTranslation();
+  const currency = useAppSelector((s) => s.settings.currencyCode);
   const {
+    budgetText,
     canSave,
     color,
     icon,
@@ -32,11 +41,21 @@ export function EditCategoryPage() {
     name,
     onDelete,
     save,
+    setBudgetText,
     setColor,
     setIcon,
     setKind,
     setName,
   } = useEditCategory();
+
+  const initialGroupIdx = useMemo(() => {
+    const idx = ICON_GROUPS.findIndex((g) =>
+      g.icons.some((name) => name === icon)
+    );
+    return idx >= 0 ? idx : 0;
+  }, [icon]);
+  const [groupIdx, setGroupIdx] = useState(initialGroupIdx);
+  const currentGroup = ICON_GROUPS[groupIdx];
 
   return (
     <GlassBackground accent={color}>
@@ -88,31 +107,129 @@ export function EditCategoryPage() {
             >
               {t('category.iconLabel')}
             </Text>
-            <View style={styles.iconGrid}>
-              {ICON_PRESETS.map((g) => {
-                const active = g === icon;
-                return (
-                  <Pressable
-                    key={g}
-                    onPress={() => setIcon(g)}
-                    style={({ pressed }) => [
-                      styles.iconCell,
-                      {
-                        backgroundColor: active ? colors.accent : colors.card,
-                        borderColor: active ? colors.accent : colors.border,
-                        opacity: pressed ? 0.85 : 1,
-                      },
+            <View
+              style={[
+                styles.iconCard,
+                {
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
+                },
+              ]}
+            >
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.tabsRow}
+              >
+                {ICON_GROUPS.map((group, idx) => {
+                  const active = idx === groupIdx;
+                  return (
+                    <Pressable
+                      key={group.key}
+                      onPress={() => setGroupIdx(idx)}
+                      style={({ pressed }) => [
+                        styles.tab,
+                        {
+                          backgroundColor: active ? colors.accent : colors.fill,
+                          opacity: pressed ? 0.85 : 1,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.tabLabel,
+                          {
+                            color: active
+                              ? colors.onAccent
+                              : colors.secondaryLabel,
+                          },
+                        ]}
+                      >
+                        {t(`category.iconGroup.${group.key}` as never)}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+              <ScrollView
+                style={styles.iconScroll}
+                contentContainerStyle={styles.iconGrid}
+                showsVerticalScrollIndicator={false}
+                nestedScrollEnabled
+              >
+                {currentGroup.icons.map((g) => {
+                  const active = g === icon;
+                  return (
+                    <View key={g} style={styles.iconSlot}>
+                      <Pressable
+                        onPress={() => setIcon(g)}
+                        style={({ pressed }) => [
+                          styles.iconCell,
+                          {
+                            backgroundColor: active
+                              ? colors.accent
+                              : colors.fill,
+                            borderColor: active ? colors.accent : colors.border,
+                            opacity: pressed ? 0.85 : 1,
+                          },
+                        ]}
+                      >
+                        <CategoryIcon
+                          icon={g}
+                          size={20}
+                          color={active ? colors.onAccent : colors.label}
+                        />
+                      </Pressable>
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            </View>
+
+            {kind === 'expense' ? (
+              <>
+                <Text
+                  style={[
+                    styles.label,
+                    styles.labelSpaced,
+                    { color: colors.tertiaryLabel },
+                  ]}
+                >
+                  {t('category.budgetLabel')}
+                </Text>
+                <View
+                  style={[
+                    styles.group,
+                    styles.budgetRow,
+                    {
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                    },
+                  ]}
+                >
+                  <TextInput
+                    value={budgetText}
+                    onChangeText={setBudgetText}
+                    placeholder={t('category.budgetPlaceholder')}
+                    placeholderTextColor={colors.tertiaryLabel}
+                    keyboardType="decimal-pad"
+                    style={[
+                      styles.input,
+                      styles.budgetInput,
+                      { color: colors.label },
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.budgetCurrency,
+                      { color: colors.secondaryLabel },
                     ]}
                   >
-                    <CategoryIcon
-                      icon={g}
-                      size={18}
-                      color={active ? colors.onAccent : colors.label}
-                    />
-                  </Pressable>
-                );
-              })}
-            </View>
+                    {currency}
+                  </Text>
+                </View>
+              </>
+            ) : null}
 
             <Text
               style={[
@@ -123,22 +240,23 @@ export function EditCategoryPage() {
             >
               {t('category.colorLabel')}
             </Text>
-            <View style={styles.colorRow}>
+            <View style={styles.colorGrid}>
               {COLOR_PRESETS.map((c) => {
                 const active = c === color;
                 return (
-                  <Pressable
-                    key={c}
-                    onPress={() => setColor(c)}
-                    style={({ pressed }) => [
-                      styles.colorCell,
-                      {
-                        backgroundColor: c,
-                        borderColor: active ? colors.label : 'transparent',
-                        opacity: pressed ? 0.85 : 1,
-                      },
-                    ]}
-                  />
+                  <View key={c} style={styles.colorSlot}>
+                    <Pressable
+                      onPress={() => setColor(c)}
+                      style={({ pressed }) => [
+                        styles.colorCell,
+                        {
+                          backgroundColor: c,
+                          borderColor: active ? colors.label : 'transparent',
+                          opacity: pressed ? 0.85 : 1,
+                        },
+                      ]}
+                    />
+                  </View>
                 );
               })}
             </View>
@@ -256,6 +374,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.space.md,
     paddingVertical: 12,
   },
+  budgetRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  budgetInput: {
+    flex: 1,
+  },
+  budgetCurrency: {
+    paddingRight: theme.space.md,
+    fontSize: 13,
+    fontWeight: '600',
+  },
   segment: {
     flexDirection: 'row',
     borderRadius: theme.radius.pill,
@@ -272,28 +402,58 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
   },
+  iconCard: {
+    borderRadius: theme.radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: theme.space.sm,
+  },
+  tabsRow: {
+    paddingHorizontal: theme.space.sm,
+    gap: theme.space.xs,
+    paddingBottom: theme.space.sm,
+  },
+  tab: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: theme.radius.pill,
+  },
+  tabLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  iconScroll: {
+    maxHeight: 240,
+  },
   iconGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.space.sm,
+    paddingHorizontal: theme.space.xs,
+    paddingBottom: theme.space.xs,
+  },
+  iconSlot: {
+    width: ICON_SLOT_WIDTH,
+    aspectRatio: 1,
+    padding: 4,
   },
   iconCell: {
-    width: 42,
-    height: 42,
+    flex: 1,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
   },
-  colorRow: {
+  colorGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.space.sm,
+  },
+  colorSlot: {
+    width: COLOR_SLOT_WIDTH,
+    aspectRatio: 1,
+    padding: 4,
   },
   colorCell: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    flex: 1,
+    borderRadius: 999,
     borderWidth: 2,
   },
   footer: {

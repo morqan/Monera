@@ -1,3 +1,9 @@
+import {
+  CalendarDays,
+  Search,
+  Sparkles,
+  type LucideIcon,
+} from 'lucide-react-native';
 import { Pressable, Text, useColorScheme, View } from 'react-native';
 
 import { getGlassPanelShadow, type AppColors } from '@/app/styles/theme';
@@ -12,26 +18,34 @@ type Props = {
   onResetFilter?: () => void;
 };
 
-const EMPTY_META = {
+const EMPTY_META: Record<
+  'all' | 'filtered' | 'month',
+  {
+    Icon: LucideIcon;
+    titleKey: string;
+    subtitleKey: string;
+    ctaKey: string;
+  }
+> = {
   all: {
-    glyph: '✦',
+    Icon: Sparkles,
     titleKey: 'transactions.emptyAllTitle',
     subtitleKey: 'transactions.emptyAllSubtitle',
     ctaKey: 'transactions.emptyAllCta',
   },
   filtered: {
-    glyph: '0',
+    Icon: Search,
     titleKey: 'transactions.emptyFilteredTitle',
     subtitleKey: 'transactions.emptyFilteredSubtitle',
     ctaKey: 'transactions.emptyFilteredCta',
   },
   month: {
-    glyph: '◌',
+    Icon: CalendarDays,
     titleKey: 'transactions.emptyMonthTitle',
     subtitleKey: 'transactions.emptyMonthSubtitle',
     ctaKey: 'transactions.emptyMonthCta',
   },
-} as const;
+};
 
 export function TransactionsEmpty({
   colors,
@@ -44,6 +58,7 @@ export function TransactionsEmpty({
   const meta = EMPTY_META[variant];
   const action = variant === 'filtered' ? onResetFilter : onCreate;
   const { t } = useTranslation();
+  const Icon = meta.Icon;
 
   return (
     <View style={transactionsListStyles.empty}>
@@ -63,14 +78,7 @@ export function TransactionsEmpty({
             { backgroundColor: colors.fill },
           ]}
         >
-          <Text
-            style={[
-              transactionsListStyles.emptyGlyph,
-              { color: colors.accent },
-            ]}
-          >
-            {meta.glyph}
-          </Text>
+          <Icon size={28} color={colors.accent} strokeWidth={2} />
         </View>
         <Text
           style={[transactionsListStyles.emptyTitle, { color: colors.label }]}
@@ -88,6 +96,8 @@ export function TransactionsEmpty({
         {action ? (
           <Pressable
             onPress={action}
+            accessibilityRole="button"
+            accessibilityLabel={t(meta.ctaKey)}
             style={({ pressed }) => [
               transactionsListStyles.emptyCta,
               {

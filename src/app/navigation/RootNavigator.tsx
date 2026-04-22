@@ -10,6 +10,7 @@ import { CategoryTransactionsPage } from '@/pages/category-transactions';
 import { CreateTransactionPage } from '@/pages/create-transaction';
 import { EditCategoryPage } from '@/pages/edit-category';
 import { HomePage } from '@/pages/home';
+import { InsightsPage } from '@/pages/insights';
 import { LoginPage } from '@/pages/login';
 import { ManageCategoriesPage } from '@/pages/manage-categories';
 import { SettingsPage } from '@/pages/settings';
@@ -85,6 +86,14 @@ export function RootNavigator() {
           name="Settings"
           component={SettingsPage}
           options={{ title: t('settings.title') }}
+        />
+        <Stack.Screen
+          name="Insights"
+          component={InsightsPage}
+          options={{
+            title: t('insights.title'),
+            headerRight: SettingsHeaderButton,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

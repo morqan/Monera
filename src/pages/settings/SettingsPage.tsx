@@ -1,5 +1,7 @@
 import {
+  Alert,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   useColorScheme,
@@ -11,7 +13,11 @@ import { getAppColors, getGlassPanelShadow, theme } from '@/app/styles/theme';
 import { useAppDispatch, useAppSelector } from '@/app/store';
 import { patchSettings, type ThemePreference } from '@/entities/settings';
 import { useTranslation, type AppLocale } from '@/shared/i18n';
-import { SUPPORTED_CURRENCIES } from '@/shared/lib';
+import {
+  buildCsvExport,
+  buildJsonExport,
+  SUPPORTED_CURRENCIES,
+} from '@/shared/lib';
 
 const CURRENCY_SYMBOL: Record<string, string> = {
   RUB: '₽',
@@ -26,6 +32,7 @@ const CURRENCY_SYMBOL: Record<string, string> = {
   TRY: '₺',
 };
 
+import { SettingsActionRow } from './ui/SettingsActionRow';
 import { SettingsRowGroup } from './ui/SettingsRowGroup';
 import { SettingsSelectRow } from './ui/SettingsSelectRow';
 
@@ -40,6 +47,31 @@ export function SettingsPage() {
   const currentLocale = useAppSelector((s) => s.settings.locale);
   const currencyCode = useAppSelector((s) => s.settings.currencyCode);
   const themePref = useAppSelector((s) => s.settings.theme);
+  const transactions = useAppSelector((s) => s.transactions.items);
+  const categories = useAppSelector((s) => s.categories.items);
+  const budgets = useAppSelector((s) => s.budgets.items);
+
+  const shareExport = async (payload: string) => {
+    try {
+      await Share.share({ message: payload });
+    } catch {
+      Alert.alert(t('settings.exportError'));
+    }
+  };
+
+  const handleExportJson = () => {
+    const bundle = {
+      exportedAt: new Date().toISOString(),
+      transactions,
+      categories,
+      budgets,
+    };
+    shareExport(buildJsonExport(bundle));
+  };
+
+  const handleExportCsv = () => {
+    shareExport(buildCsvExport(transactions, categories));
+  };
 
   const languageOptions: Array<{ value: AppLocale; label: string }> = [
     { value: 'ru', label: t('settings.languageRu') },
@@ -105,6 +137,24 @@ export function SettingsPage() {
             onChange={(value) =>
               dispatch(patchSettings({ theme: value as ThemePreference }))
             }
+          />
+        </SettingsRowGroup>
+
+        <SettingsRowGroup
+          colors={colors}
+          shadow={panel}
+          title={t('settings.export')}
+        >
+          <SettingsActionRow
+            colors={colors}
+            label={t('settings.exportJson')}
+            onPress={handleExportJson}
+            showDivider
+          />
+          <SettingsActionRow
+            colors={colors}
+            label={t('settings.exportCsv')}
+            onPress={handleExportCsv}
           />
         </SettingsRowGroup>
 

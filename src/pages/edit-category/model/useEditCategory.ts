@@ -16,6 +16,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import type { RootStackParamList } from '@/app/navigation/types';
 import { useAppDispatch, useAppSelector } from '@/app/store';
+import { clearBudget, setBudget } from '@/entities/budget';
 import {
   addCategory,
   deleteCategory,
@@ -41,6 +42,7 @@ export function useEditCategory() {
 
   const categories = useAppSelector((s) => s.categories.items);
   const transactions = useAppSelector((s) => s.transactions.items);
+  const budgets = useAppSelector((s) => s.budgets.items);
 
   const categoryId = route.params?.categoryId;
   const defaultKind = route.params?.defaultKind ?? 'expense';
@@ -58,6 +60,7 @@ export function useEditCategory() {
   const [kind, setKind] = useState<TransactionKind>(defaultKind);
   const [icon, setIcon] = useState<string>(ICON_PRESETS[0]);
   const [color, setColor] = useState(COLOR_PRESETS[0]);
+  const [budgetText, setBudgetText] = useState('');
 
   const appliedSeedKey = useRef<string | null>(null);
   useEffect(() => {
@@ -77,13 +80,20 @@ export function useEditCategory() {
       setKind(existing.kind);
       setIcon(existing.icon ?? ICON_PRESETS[0]);
       setColor(existing.color ?? COLOR_PRESETS[0]);
+      const currentBudget = budgets.find((b) => b.categoryId === existing.id);
+      setBudgetText(
+        currentBudget && currentBudget.limit > 0
+          ? String(currentBudget.limit)
+          : ''
+      );
     } else {
       setName('');
       setKind(defaultKind);
       setIcon(ICON_PRESETS[0]);
       setColor(COLOR_PRESETS[0]);
+      setBudgetText('');
     }
-  }, [existing, defaultKind, t]);
+  }, [existing, defaultKind, t, budgets]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -93,11 +103,18 @@ export function useEditCategory() {
 
   const canSave = name.trim().length > 0;
 
+  const parseBudget = (value: string): number => {
+    const cleaned = value.replace(/[^\d.,]/g, '').replace(',', '.');
+    const parsed = Number(cleaned);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+  };
+
   const save = useCallback(() => {
     if (!canSave) {
       return;
     }
     const trimmed = name.trim();
+    const targetId = isEdit && existing ? existing.id : createId();
     if (isEdit && existing) {
       dispatch(
         updateCategory({
@@ -111,13 +128,23 @@ export function useEditCategory() {
     } else {
       dispatch(
         addCategory({
-          id: createId(),
+          id: targetId,
           name: trimmed,
           kind,
           icon,
           color,
         })
       );
+    }
+    if (kind === 'expense') {
+      const limit = parseBudget(budgetText);
+      if (limit > 0) {
+        dispatch(setBudget({ categoryId: targetId, limit }));
+      } else {
+        dispatch(clearBudget(targetId));
+      }
+    } else {
+      dispatch(clearBudget(targetId));
     }
     navigation.goBack();
   }, [
@@ -129,6 +156,7 @@ export function useEditCategory() {
     kind,
     icon,
     color,
+    budgetText,
     dispatch,
     navigation,
   ]);
@@ -184,6 +212,7 @@ export function useEditCategory() {
   }, [existing, isBuiltIn, categories, transactions, dispatch, navigation, t]);
 
   return {
+    budgetText,
     canSave,
     color,
     icon,
@@ -193,6 +222,7 @@ export function useEditCategory() {
     name,
     onDelete: isEdit ? remove : undefined,
     save,
+    setBudgetText,
     setColor,
     setIcon,
     setKind,

@@ -25,6 +25,7 @@ export function useHome() {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const categories = useAppSelector((s) => s.categories.items);
   const transactions = useAppSelector((s) => s.transactions.items);
+  const budgets = useAppSelector((s) => s.budgets.items);
   const currency = useAppSelector((s) => s.settings.currencyCode);
   const locale = useAppSelector((s) => s.settings.locale);
 
@@ -75,13 +76,32 @@ export function useHome() {
     [categories, kind]
   );
 
+  const budgetMap = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const b of budgets) {
+      m.set(b.categoryId, b.limit);
+    }
+    return m;
+  }, [budgets]);
+
+  const showBudgetProgress = kind === 'expense' && range.preset === 'month';
+
   const tiles = useMemo(
     () =>
-      visibleCategories.map((c) => ({
-        category: c,
-        summary: summaries.get(c.id) ?? null,
-      })),
-    [visibleCategories, summaries]
+      visibleCategories.map((c) => {
+        const summary = summaries.get(c.id) ?? null;
+        const limit = budgetMap.get(c.id);
+        const progress =
+          showBudgetProgress && limit && limit > 0
+            ? (summary?.total ?? 0) / limit
+            : null;
+        return {
+          category: c,
+          summary,
+          budgetProgress: progress,
+        };
+      }),
+    [visibleCategories, summaries, budgetMap, showBudgetProgress]
   );
 
   return {
@@ -95,6 +115,7 @@ export function useHome() {
     openCategory: (categoryId: string) =>
       navigation.navigate('CategoryTransactions', { categoryId }),
     openCreate: () => navigation.navigate('CreateTransaction', { kind }),
+    openInsights: () => navigation.navigate('Insights'),
     openEditCategory: (categoryId?: string) =>
       navigation.navigate(
         'EditCategory',

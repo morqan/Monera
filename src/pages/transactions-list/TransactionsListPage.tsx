@@ -23,6 +23,7 @@ import {
 import { transactionsListStyles } from './styles';
 import { AddFab } from './ui/AddFab';
 import { MonthSummary } from './ui/MonthSummary';
+import { SearchField } from './ui/SearchField';
 import { TransactionsEmpty } from './ui/TransactionsEmpty';
 import { TransactionsFilterTabs } from './ui/TransactionsFilter';
 
@@ -37,6 +38,7 @@ export function TransactionsListPage() {
     hasRangeTransactions,
     isFilteredEmpty,
     locale,
+    query,
     range,
     rangeTotals,
     next,
@@ -47,13 +49,22 @@ export function TransactionsListPage() {
     sections,
     setFilter,
     setPreset,
+    setQuery,
     setRange,
   } = useTransactionsList();
 
   const renderItem: SectionListRenderItem<Row, TransactionSection> =
     useCallback(
       ({ item }) => (
-        <Pressable onPress={() => openEdit(item.transaction.id)}>
+        <Pressable
+          onPress={() => openEdit(item.transaction.id)}
+          accessibilityRole="button"
+          accessibilityLabel={`${item.categoryName} ${formatMoney(
+            item.transaction.amount,
+            currency,
+            locale
+          )}`}
+        >
           <TransactionRow
             transaction={item.transaction}
             categoryName={item.categoryName}
@@ -154,6 +165,11 @@ export function TransactionsListPage() {
                 showsVerticalScrollIndicator={false}
               >
                 {rangeHeader}
+                <SearchField
+                  colors={colors}
+                  value={query}
+                  onChange={setQuery}
+                />
                 <TransactionsFilterTabs
                   colors={colors}
                   value={filter}
@@ -176,6 +192,11 @@ export function TransactionsListPage() {
                 ListHeaderComponent={
                   <>
                     {rangeHeader}
+                    <SearchField
+                      colors={colors}
+                      value={query}
+                      onChange={setQuery}
+                    />
                     <TransactionsFilterTabs
                       colors={colors}
                       value={filter}

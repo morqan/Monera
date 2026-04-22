@@ -16,6 +16,7 @@ type Props = {
   amountLabel: string | null;
   count: number;
   colors: AppColors;
+  budgetProgress?: number | null;
   onPress: () => void;
   onLongPress?: () => void;
 };
@@ -25,6 +26,7 @@ export function CategoryTile({
   amountLabel,
   count,
   colors,
+  budgetProgress,
   onPress,
   onLongPress,
 }: Props) {
@@ -46,6 +48,8 @@ export function CategoryTile({
           onPress={onPress}
           onLongPress={onLongPress}
           android_ripple={{ color: colors.fill }}
+          accessibilityRole="button"
+          accessibilityLabel={`${getName(category)} · ${amountLabel ?? '—'}`}
           style={({ pressed }) => [
             styles.inner,
             { opacity: pressed ? 0.92 : 1 },
@@ -72,6 +76,28 @@ export function CategoryTile({
           >
             {amountLabel ?? '—'}
           </Text>
+          {budgetProgress != null ? (
+            <View
+              style={[
+                styles.progressTrack,
+                { backgroundColor: hexToRgba(accent, isDark ? 0.16 : 0.12) },
+              ]}
+            >
+              <View
+                style={[
+                  styles.progressFill,
+                  {
+                    width: `${Math.min(
+                      100,
+                      Math.max(0, budgetProgress * 100)
+                    )}%`,
+                    backgroundColor:
+                      budgetProgress >= 1 ? colors.expense : accent,
+                  },
+                ]}
+              />
+            </View>
+          ) : null}
           {count > 0 ? (
             <View
               style={[
@@ -139,5 +165,15 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '600',
     letterSpacing: 0,
+  },
+  progressTrack: {
+    height: 3,
+    borderRadius: 2,
+    marginTop: 6,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 2,
   },
 });

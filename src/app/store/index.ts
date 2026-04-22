@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import { budgetsReducer } from '@/entities/budget';
 import { categoriesReducer } from '@/entities/category';
 import { sessionReducer } from '@/entities/session';
 import { settingsReducer } from '@/entities/settings';
@@ -20,6 +21,7 @@ export const store = configureStore({
     [baseApi.reducerPath]: baseApi.reducer,
     transactions: transactionsReducer,
     categories: categoriesReducer,
+    budgets: budgetsReducer,
     settings: settingsReducer,
     session: sessionReducer,
   },
@@ -34,6 +36,7 @@ store.subscribe(() => {
   persistRootState({
     transactions: store.getState().transactions,
     categories: store.getState().categories,
+    budgets: store.getState().budgets,
     settings: store.getState().settings,
   }).catch(() => {
     /* persistence failures are non-fatal */

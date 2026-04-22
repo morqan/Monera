@@ -1,40 +1,163 @@
 import type { CategoryIconName } from '@/shared/ui';
 
-export const ICON_PRESETS: CategoryIconName[] = [
-  'Wallet',
-  'Briefcase',
-  'Gift',
-  'TrendingUp',
-  'PartyPopper',
-  'Laptop',
-  'Sparkles',
-  'Landmark',
-  'ShoppingCart',
-  'UtensilsCrossed',
-  'Coffee',
-  'Home',
-  'Lightbulb',
-  'Bus',
-  'Car',
-  'Plane',
-  'Fuel',
-  'Pill',
-  'HeartPulse',
-  'Gamepad2',
-  'Film',
-  'Music',
-  'BookOpen',
-  'ShoppingBag',
-  'Shirt',
-  'RefreshCw',
-  'Smartphone',
-  'PawPrint',
-  'Baby',
-  'GraduationCap',
-  'Dumbbell',
-  'Camera',
-  'MoreHorizontal',
+export type IconGroupKey =
+  | 'money'
+  | 'work'
+  | 'tech'
+  | 'leisure'
+  | 'health'
+  | 'shopping'
+  | 'food'
+  | 'home'
+  | 'transport'
+  | 'nature'
+  | 'people'
+  | 'other';
+
+export const ICON_GROUPS: Array<{
+  key: IconGroupKey;
+  icons: CategoryIconName[];
+}> = [
+  {
+    key: 'money',
+    icons: [
+      'Wallet',
+      'Banknote',
+      'Coins',
+      'PiggyBank',
+      'CreditCard',
+      'DollarSign',
+      'Bitcoin',
+      'TrendingUp',
+      'TrendingDown',
+      'Percent',
+      'Calculator',
+      'Receipt',
+      'Landmark',
+    ],
+  },
+  {
+    key: 'work',
+    icons: [
+      'Briefcase',
+      'Building2',
+      'FileText',
+      'Pencil',
+      'BookOpen',
+      'GraduationCap',
+    ],
+  },
+  {
+    key: 'tech',
+    icons: [
+      'Laptop',
+      'Monitor',
+      'Smartphone',
+      'Printer',
+      'Wifi',
+      'Headphones',
+      'Tv',
+      'Camera',
+      'Gamepad2',
+      'Dices',
+    ],
+  },
+  {
+    key: 'leisure',
+    icons: [
+      'Film',
+      'Music',
+      'Ticket',
+      'Palette',
+      'Popcorn',
+      'PartyPopper',
+      'Sparkles',
+      'Gift',
+      'Star',
+    ],
+  },
+  {
+    key: 'health',
+    icons: [
+      'Heart',
+      'HeartPulse',
+      'Pill',
+      'Stethoscope',
+      'Activity',
+      'Glasses',
+      'Dumbbell',
+    ],
+  },
+  {
+    key: 'shopping',
+    icons: ['ShoppingCart', 'ShoppingBag', 'Store', 'Tag', 'Package', 'Shirt'],
+  },
+  {
+    key: 'food',
+    icons: [
+      'UtensilsCrossed',
+      'Utensils',
+      'Coffee',
+      'CupSoda',
+      'Beer',
+      'Wine',
+      'Pizza',
+      'Sandwich',
+      'Soup',
+      'Cookie',
+      'IceCream',
+      'Apple',
+    ],
+  },
+  {
+    key: 'home',
+    icons: [
+      'Home',
+      'Sofa',
+      'Bed',
+      'Bath',
+      'Lightbulb',
+      'Flame',
+      'Droplets',
+      'Wrench',
+      'Hammer',
+      'Fuel',
+    ],
+  },
+  {
+    key: 'transport',
+    icons: [
+      'Car',
+      'Bus',
+      'Train',
+      'TramFront',
+      'Truck',
+      'Ship',
+      'Plane',
+      'Bike',
+      'MapPin',
+      'Luggage',
+      'Tent',
+      'Mountain',
+    ],
+  },
+  {
+    key: 'nature',
+    icons: ['Sun', 'Cloud', 'TreePine', 'Leaf', 'PawPrint'],
+  },
+  {
+    key: 'people',
+    icons: ['Baby', 'User', 'Users'],
+  },
+  {
+    key: 'other',
+    icons: ['RefreshCw', 'MoreHorizontal'],
+  },
 ];
+
+export const ICON_PRESETS: CategoryIconName[] = ICON_GROUPS.flatMap(
+  (g) => g.icons
+);
 
 export const COLOR_PRESETS = [
   '#3DFFB4',

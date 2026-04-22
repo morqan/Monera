@@ -1,4 +1,30 @@
+import { isCategoryIconName } from '@/shared/ui';
+
 import type { Category } from '../model/types';
+
+const FALLBACK_ICON_BY_LOCALE: Record<string, string> = {
+  salary: 'Briefcase',
+  bonus: 'PartyPopper',
+  freelance: 'Laptop',
+  invest: 'TrendingUp',
+  gift: 'Gift',
+  otherIncome: 'Sparkles',
+  food: 'ShoppingCart',
+  home: 'Home',
+  transport: 'Bus',
+  health: 'Pill',
+  leisure: 'Gamepad2',
+  subscriptions: 'RefreshCw',
+  otherExpense: 'MoreHorizontal',
+};
+
+export function migrateCategoryIcons(categories: Category[]): Category[] {
+  return categories.map((c) => {
+    if (isCategoryIconName(c.icon)) return c;
+    const byLocale = c.localeKey ? FALLBACK_ICON_BY_LOCALE[c.localeKey] : null;
+    return { ...c, icon: byLocale ?? 'MoreHorizontal' };
+  });
+}
 
 export const defaultIncomeCategories: Category[] = [
   {

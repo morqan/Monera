@@ -1,4 +1,12 @@
 import {
+  FolderPlus,
+  LayoutGrid,
+  List,
+  PieChart,
+  Plus,
+  type LucideIcon,
+} from 'lucide-react-native';
+import {
   Pressable,
   ScrollView,
   StyleSheet,
@@ -11,7 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAppColors, theme } from '@/app/styles/theme';
 import { MonthSummary } from '@/pages/transactions-list/ui/MonthSummary';
 import { useTranslation } from '@/shared/i18n';
-import { formatMoney } from '@/shared/lib';
+import { formatMoney, hexToRgba } from '@/shared/lib';
 import { GlassBackground, GlassSurface } from '@/shared/ui';
 import { CategoryTile } from '@/widgets/category-tile';
 import { RangePicker } from '@/widgets/range-picker';
@@ -34,6 +42,7 @@ export function HomePage() {
     openCategory,
     openCreate,
     openEditCategory,
+    openInsights,
     openManage,
     prev,
     reset,
@@ -99,6 +108,7 @@ export function HomePage() {
                     : null
                 }
                 count={tile.summary?.count ?? 0}
+                budgetProgress={tile.budgetProgress}
                 colors={colors}
                 onPress={() => openCategory(tile.category.id)}
                 onLongPress={() => openEditCategory(tile.category.id)}
@@ -122,34 +132,51 @@ export function HomePage() {
           </View>
 
           <View style={styles.footer}>
-            <FooterButton
-              label={t('home.addCategory')}
-              onPress={() => openEditCategory()}
-              colors={colors}
-              variant="primary"
-              isDark={isDark}
-            />
-            <FooterButton
-              label={t('home.manageCategories')}
-              onPress={openManage}
-              colors={colors}
-              variant="ghost"
-              isDark={isDark}
-            />
-            <FooterButton
-              label={t('home.allTransactions')}
-              onPress={openAllTransactions}
-              colors={colors}
-              variant="ghost"
-              isDark={isDark}
-            />
-            <FooterButton
-              label={t('transactions.emptyAllCta')}
+            <View style={styles.quickBar}>
+              <QuickAction
+                Icon={FolderPlus}
+                label={t('home.addCategory')}
+                onPress={() => openEditCategory()}
+                colors={colors}
+              />
+              <QuickAction
+                Icon={LayoutGrid}
+                label={t('home.manageCategories')}
+                onPress={openManage}
+                colors={colors}
+              />
+              <QuickAction
+                Icon={List}
+                label={t('home.allTransactions')}
+                onPress={openAllTransactions}
+                colors={colors}
+              />
+              <QuickAction
+                Icon={PieChart}
+                label={t('home.insights')}
+                onPress={openInsights}
+                colors={colors}
+              />
+            </View>
+            <Pressable
               onPress={openCreate}
-              colors={colors}
-              variant="accent"
-              isDark={isDark}
-            />
+              accessibilityRole="button"
+              accessibilityLabel={t('transactions.emptyAllCta')}
+              style={({ pressed }) => [
+                styles.primaryCta,
+                {
+                  backgroundColor: colors.accent,
+                  opacity: pressed ? 0.88 : 1,
+                },
+              ]}
+            >
+              <Plus size={18} color={colors.onAccent} strokeWidth={2.5} />
+              <Text
+                style={[styles.primaryCtaLabel, { color: colors.onAccent }]}
+              >
+                {t('transactions.emptyAllCta')}
+              </Text>
+            </Pressable>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -171,6 +198,9 @@ function KindTab({
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ selected: active }}
       style={({ pressed }) => [
         styles.kindTab,
         {
@@ -191,72 +221,45 @@ function KindTab({
   );
 }
 
-function FooterButton({
+function QuickAction({
+  Icon,
   label,
   onPress,
   colors,
-  variant,
-  isDark,
 }: {
+  Icon: LucideIcon;
   label: string;
   onPress: () => void;
   colors: ReturnType<typeof getAppColors>;
-  variant: 'primary' | 'ghost' | 'accent';
-  isDark: boolean;
 }) {
-  if (variant === 'accent') {
-    return (
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }) => [
-          styles.footerButton,
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => [
+        styles.quickSlot,
+        { opacity: pressed ? 0.7 : 1 },
+      ]}
+    >
+      <View
+        style={[
+          styles.quickIcon,
           {
-            backgroundColor: colors.accent,
-            opacity: pressed ? 0.88 : 1,
+            backgroundColor: hexToRgba(colors.accent, 0.12),
+            borderColor: hexToRgba(colors.accent, 0.22),
           },
         ]}
       >
-        <Text style={[styles.footerLabel, { color: colors.onAccent }]}>
-          {label}
-        </Text>
-      </Pressable>
-    );
-  }
-  if (variant === 'ghost') {
-    return (
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }) => [
-          styles.footerButton,
-          styles.footerGhost,
-          { opacity: pressed ? 0.7 : 1 },
-        ]}
+        <Icon size={18} color={colors.accent} strokeWidth={2} />
+      </View>
+      <Text
+        style={[styles.quickLabel, { color: colors.secondaryLabel }]}
+        numberOfLines={2}
       >
-        <Text style={[styles.footerLabel, { color: colors.secondaryLabel }]}>
-          {label}
-        </Text>
-      </Pressable>
-    );
-  }
-  return (
-    <GlassSurface
-      colors={colors}
-      isDark={isDark}
-      variant="card"
-      borderRadius={theme.radius.button}
-    >
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }) => [
-          styles.footerButton,
-          { opacity: pressed ? 0.85 : 1 },
-        ]}
-      >
-        <Text style={[styles.footerLabel, { color: colors.label }]}>
-          {label}
-        </Text>
-      </Pressable>
-    </GlassSurface>
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -309,19 +312,44 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   footer: {
-    gap: theme.space.sm,
+    gap: theme.space.md,
   },
-  footerButton: {
-    minHeight: 44,
-    borderRadius: theme.radius.button,
+  quickBar: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: theme.space.xs,
+  },
+  quickSlot: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: theme.space.xs,
+    gap: 6,
+  },
+  quickIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
   },
-  footerGhost: {
-    backgroundColor: 'transparent',
+  quickLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    letterSpacing: -0.1,
+    textAlign: 'center',
   },
-  footerLabel: {
-    fontSize: 14,
+  primaryCta: {
+    minHeight: 48,
+    borderRadius: theme.radius.pill,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: theme.space.md,
+  },
+  primaryCtaLabel: {
+    fontSize: 15,
     fontWeight: '600',
     letterSpacing: -0.1,
   },

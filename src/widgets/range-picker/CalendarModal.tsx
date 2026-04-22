@@ -113,7 +113,7 @@ export function CalendarModal({
             styles.sheet,
             shadow,
             {
-              backgroundColor: colors.card,
+              backgroundColor: colors.background,
               borderColor: colors.border,
             },
           ]}
@@ -212,6 +212,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: theme.space.lg,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   sheet: {
     width: '100%',

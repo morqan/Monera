@@ -3,6 +3,7 @@ export {
   defaultCategories,
   defaultExpenseCategories,
   defaultIncomeCategories,
+  migrateCategoryIcons,
 } from './lib/defaultCategories';
 export { useCategoryName } from './lib/useCategoryName';
 export {
