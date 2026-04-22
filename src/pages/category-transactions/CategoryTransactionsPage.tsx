@@ -15,10 +15,10 @@ import { getAppColors, theme } from '@/app/styles/theme';
 import { useTranslation } from '@/shared/i18n';
 import { formatMoney } from '@/shared/lib';
 import { GlassBackground } from '@/shared/ui';
+import { RangePicker } from '@/widgets/range-picker';
 import { TransactionRow } from '@/widgets/transaction-row';
 
 import { MonthSummary } from '../transactions-list/ui/MonthSummary';
-import { MonthSwitcher } from '../transactions-list/ui/MonthSwitcher';
 import { transactionsListStyles } from '../transactions-list/styles';
 import {
   useCategoryTransactions,
@@ -33,17 +33,19 @@ export function CategoryTransactionsPage() {
   const {
     category,
     currency,
-    hasMonthItems,
+    hasRangeItems,
     locale,
-    monthKey,
-    monthTotals,
-    nextMonth,
+    range,
+    rangeTotals,
+    next,
     openCreate,
     openEdit,
     openEditCategory,
-    prevMonth,
-    resetMonth,
+    prev,
+    reset,
     sections,
+    setPreset,
+    setRange,
   } = useCategoryTransactions();
 
   const renderItem: SectionListRenderItem<CategoryRow, CategorySection> =
@@ -83,16 +85,18 @@ export function CategoryTransactionsPage() {
 
   const header = (
     <>
-      <MonthSwitcher
+      <RangePicker
         colors={colors}
-        monthKey={monthKey}
-        onPrev={prevMonth}
-        onNext={nextMonth}
-        onReset={resetMonth}
+        range={range}
+        onPrev={prev}
+        onNext={next}
+        onReset={reset}
+        onPresetChange={setPreset}
+        onCustomRange={setRange}
       />
       <MonthSummary
         colors={colors}
-        totals={monthTotals}
+        totals={rangeTotals}
         currency={currency}
         locale={locale}
       />
@@ -128,7 +132,7 @@ export function CategoryTransactionsPage() {
     <GlassBackground accent={category.color}>
       <SafeAreaView style={transactionsListStyles.screen} edges={['bottom']}>
         <View style={transactionsListStyles.content}>
-          {!hasMonthItems ? (
+          {!hasRangeItems ? (
             <ScrollView
               contentContainerStyle={transactionsListStyles.scrollContent}
               showsVerticalScrollIndicator={false}

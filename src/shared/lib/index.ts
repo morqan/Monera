@@ -4,6 +4,20 @@
 
 export { hexToRgba } from './color';
 export { createId } from './createId';
+export {
+  currentRange,
+  customRange,
+  formatRangeTitle,
+  isCurrentRange,
+  parseISODate,
+  rangeContainsISO,
+  rangeFromPreset,
+  rangesEqual,
+  shiftRange,
+  todayISODate,
+  toISODate,
+} from './dateRange';
+export type { DateRange, RangePreset } from './dateRange';
 export { formatMoney, SUPPORTED_CURRENCIES } from './formatMoney';
 export type { CurrencyCode } from './formatMoney';
 export { logger } from './logger';

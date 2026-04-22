@@ -10,11 +10,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getAppColors, theme } from '@/app/styles/theme';
 import { MonthSummary } from '@/pages/transactions-list/ui/MonthSummary';
-import { MonthSwitcher } from '@/pages/transactions-list/ui/MonthSwitcher';
 import { useTranslation } from '@/shared/i18n';
 import { formatMoney } from '@/shared/lib';
 import { GlassBackground, GlassSurface } from '@/shared/ui';
 import { CategoryTile } from '@/widgets/category-tile';
+import { RangePicker } from '@/widgets/range-picker';
 
 import { useHome } from './model/useHome';
 
@@ -27,17 +27,19 @@ export function HomePage() {
     currency,
     kind,
     locale,
-    monthKey,
-    monthTotals,
-    nextMonth,
+    range,
+    rangeTotals,
+    next,
     openAllTransactions,
     openCategory,
     openCreate,
     openEditCategory,
     openManage,
-    prevMonth,
-    resetMonth,
+    prev,
+    reset,
     setKind,
+    setPreset,
+    setRange,
     tiles,
   } = useHome();
 
@@ -48,16 +50,18 @@ export function HomePage() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-          <MonthSwitcher
+          <RangePicker
             colors={colors}
-            monthKey={monthKey}
-            onPrev={prevMonth}
-            onNext={nextMonth}
-            onReset={resetMonth}
+            range={range}
+            onPrev={prev}
+            onNext={next}
+            onReset={reset}
+            onPresetChange={setPreset}
+            onCustomRange={setRange}
           />
           <MonthSummary
             colors={colors}
-            totals={monthTotals}
+            totals={rangeTotals}
             currency={currency}
             locale={locale}
           />

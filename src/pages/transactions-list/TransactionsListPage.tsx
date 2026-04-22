@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAppColors } from '@/app/styles/theme';
 import { formatMoney } from '@/shared/lib';
 import { GlassBackground } from '@/shared/ui';
+import { RangePicker } from '@/widgets/range-picker';
 import { TransactionRow } from '@/widgets/transaction-row';
 
 import {
@@ -22,7 +23,6 @@ import {
 import { transactionsListStyles } from './styles';
 import { AddFab } from './ui/AddFab';
 import { MonthSummary } from './ui/MonthSummary';
-import { MonthSwitcher } from './ui/MonthSwitcher';
 import { TransactionsEmpty } from './ui/TransactionsEmpty';
 import { TransactionsFilterTabs } from './ui/TransactionsFilter';
 
@@ -34,18 +34,20 @@ export function TransactionsListPage() {
     currency,
     filter,
     hasAnyTransactions,
-    hasMonthTransactions,
+    hasRangeTransactions,
     isFilteredEmpty,
     locale,
-    monthKey,
-    monthTotals,
-    nextMonth,
+    range,
+    rangeTotals,
+    next,
     openCreate,
     openEdit,
-    prevMonth,
-    resetMonth,
+    prev,
+    reset,
     sections,
     setFilter,
+    setPreset,
+    setRange,
   } = useTransactionsList();
 
   const renderItem: SectionListRenderItem<Row, TransactionSection> =
@@ -80,18 +82,20 @@ export function TransactionsListPage() {
     [colors.secondaryLabel]
   );
 
-  const monthHeader = (
+  const rangeHeader = (
     <>
-      <MonthSwitcher
+      <RangePicker
         colors={colors}
-        monthKey={monthKey}
-        onPrev={prevMonth}
-        onNext={nextMonth}
-        onReset={resetMonth}
+        range={range}
+        onPrev={prev}
+        onNext={next}
+        onReset={reset}
+        onPresetChange={setPreset}
+        onCustomRange={setRange}
       />
       <MonthSummary
         colors={colors}
-        totals={monthTotals}
+        totals={rangeTotals}
         currency={currency}
         locale={locale}
       />
@@ -132,12 +136,12 @@ export function TransactionsListPage() {
           ]}
         >
           <View style={transactionsListStyles.content}>
-            {!hasMonthTransactions ? (
+            {!hasRangeTransactions ? (
               <ScrollView
                 contentContainerStyle={transactionsListStyles.scrollContent}
                 showsVerticalScrollIndicator={false}
               >
-                {monthHeader}
+                {rangeHeader}
                 <TransactionsEmpty
                   colors={colors}
                   variant="month"
@@ -149,7 +153,7 @@ export function TransactionsListPage() {
                 contentContainerStyle={transactionsListStyles.scrollContent}
                 showsVerticalScrollIndicator={false}
               >
-                {monthHeader}
+                {rangeHeader}
                 <TransactionsFilterTabs
                   colors={colors}
                   value={filter}
@@ -171,7 +175,7 @@ export function TransactionsListPage() {
                 renderSectionHeader={renderSectionHeader}
                 ListHeaderComponent={
                   <>
-                    {monthHeader}
+                    {rangeHeader}
                     <TransactionsFilterTabs
                       colors={colors}
                       value={filter}

@@ -11,10 +11,12 @@ import { useAppSelector } from '@/app/store';
 import { useCategoryName } from '@/entities/category';
 import type { Transaction } from '@/entities/transaction';
 import {
-  currentMonthKey,
-  monthKeyFromDateString,
-  shiftMonth,
-  type MonthKey,
+  currentRange,
+  rangeContainsISO,
+  rangeFromPreset,
+  shiftRange,
+  type DateRange,
+  type RangePreset,
 } from '@/shared/lib';
 
 export type CategoryRow = {
@@ -76,7 +78,7 @@ export function useCategoryTransactions() {
     [categories, categoryId]
   );
 
-  const [monthKey, setMonthKey] = useState<MonthKey>(() => currentMonthKey());
+  const [range, setRange] = useState<DateRange>(() => currentRange('month'));
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -84,20 +86,18 @@ export function useCategoryTransactions() {
     });
   }, [navigation, category, getName]);
 
-  const monthItems = useMemo(
+  const rangeItems = useMemo(
     () =>
       items.filter(
-        (t) =>
-          t.categoryId === categoryId &&
-          monthKeyFromDateString(t.date) === monthKey
+        (t) => t.categoryId === categoryId && rangeContainsISO(range, t.date)
       ),
-    [items, categoryId, monthKey]
+    [items, categoryId, range]
   );
 
-  const monthTotals = useMemo(() => {
+  const rangeTotals = useMemo(() => {
     let income = 0;
     let expense = 0;
-    for (const t of monthItems) {
+    for (const t of rangeItems) {
       if (t.kind === 'income') {
         income += t.amount;
       } else {
@@ -105,10 +105,10 @@ export function useCategoryTransactions() {
       }
     }
     return { income, expense, balance: income - expense };
-  }, [monthItems]);
+  }, [rangeItems]);
 
   const sections = useMemo<CategorySection[]>(() => {
-    const rows: CategoryRow[] = [...monthItems]
+    const rows: CategoryRow[] = [...rangeItems]
       .sort((a, b) => {
         const d = new Date(b.date).getTime() - new Date(a.date).getTime();
         if (d !== 0) {
@@ -137,19 +137,21 @@ export function useCategoryTransactions() {
       title: formatSectionTitle(date, locale),
       data,
     }));
-  }, [monthItems, category, getName, locale]);
+  }, [rangeItems, category, getName, locale]);
 
   return {
     category,
     currency,
     locale,
-    monthKey,
-    monthTotals,
+    range,
+    rangeTotals,
     sections,
-    hasMonthItems: monthItems.length > 0,
-    prevMonth: () => setMonthKey((k) => shiftMonth(k, -1)),
-    nextMonth: () => setMonthKey((k) => shiftMonth(k, 1)),
-    resetMonth: () => setMonthKey(currentMonthKey()),
+    hasRangeItems: rangeItems.length > 0,
+    prev: () => setRange((r) => shiftRange(r, -1)),
+    next: () => setRange((r) => shiftRange(r, 1)),
+    reset: () => setRange((r) => currentRange(r.preset)),
+    setPreset: (preset: RangePreset) => setRange(() => rangeFromPreset(preset)),
+    setRange,
     openCreate: () =>
       navigation.navigate('CreateTransaction', {
         categoryId,

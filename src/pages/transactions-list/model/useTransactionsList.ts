@@ -7,10 +7,12 @@ import { useAppSelector } from '@/app/store';
 import { useCategoryName } from '@/entities/category';
 import type { Transaction } from '@/entities/transaction';
 import {
-  currentMonthKey,
-  monthKeyFromDateString,
-  shiftMonth,
-  type MonthKey,
+  currentRange,
+  rangeContainsISO,
+  rangeFromPreset,
+  shiftRange,
+  type DateRange,
+  type RangePreset,
 } from '@/shared/lib';
 
 export type TransactionsFilter = 'all' | 'income' | 'expense';
@@ -26,11 +28,13 @@ export type TransactionSection = {
   data: TransactionRow[];
 };
 
-export type MonthTotals = {
+export type RangeTotals = {
   income: number;
   expense: number;
   balance: number;
 };
+
+export type MonthTotals = RangeTotals;
 
 function parseDateOnly(value: string): Date {
   const [year, month, day] = value
@@ -73,17 +77,17 @@ export function useTransactionsList() {
   const locale = useAppSelector((s) => s.settings.locale);
   const getName = useCategoryName();
   const [filter, setFilter] = useState<TransactionsFilter>('all');
-  const [monthKey, setMonthKey] = useState<MonthKey>(() => currentMonthKey());
+  const [range, setRange] = useState<DateRange>(() => currentRange('month'));
 
-  const monthItems = useMemo(
-    () => items.filter((t) => monthKeyFromDateString(t.date) === monthKey),
-    [items, monthKey]
+  const rangeItems = useMemo(
+    () => items.filter((t) => rangeContainsISO(range, t.date)),
+    [items, range]
   );
 
-  const monthTotals = useMemo<MonthTotals>(() => {
+  const rangeTotals = useMemo<RangeTotals>(() => {
     let income = 0;
     let expense = 0;
-    for (const t of monthItems) {
+    for (const t of rangeItems) {
       if (t.kind === 'income') {
         income += t.amount;
       } else {
@@ -91,11 +95,11 @@ export function useTransactionsList() {
       }
     }
     return { income, expense, balance: income - expense };
-  }, [monthItems]);
+  }, [rangeItems]);
 
   const rows = useMemo(() => {
     const map = new Map(categories.map((c) => [c.id, c]));
-    return [...monthItems]
+    return [...rangeItems]
       .sort((a, b) => {
         const d = new Date(b.date).getTime() - new Date(a.date).getTime();
         if (d !== 0) {
@@ -112,7 +116,7 @@ export function useTransactionsList() {
           categoryName: cat ? getName(cat) : '—',
         };
       });
-  }, [monthItems, categories, getName]);
+  }, [rangeItems, categories, getName]);
 
   const filteredRows = useMemo(() => {
     if (filter === 'all') {
@@ -150,25 +154,29 @@ export function useTransactionsList() {
     navigation.navigate('CreateTransaction', { transactionId });
   };
 
-  const prevMonth = () => setMonthKey((key) => shiftMonth(key, -1));
-  const nextMonth = () => setMonthKey((key) => shiftMonth(key, 1));
-  const resetMonth = () => setMonthKey(currentMonthKey());
+  const prev = () => setRange((r) => shiftRange(r, -1));
+  const next = () => setRange((r) => shiftRange(r, 1));
+  const reset = () => setRange((r) => currentRange(r.preset));
+  const setPreset = (preset: RangePreset) =>
+    setRange(() => rangeFromPreset(preset));
 
   return {
     currency,
     filter,
     hasAnyTransactions: items.length > 0,
-    hasMonthTransactions: monthItems.length > 0,
-    isFilteredEmpty: monthItems.length > 0 && filteredRows.length === 0,
+    hasRangeTransactions: rangeItems.length > 0,
+    isFilteredEmpty: rangeItems.length > 0 && filteredRows.length === 0,
     locale,
-    monthKey,
-    monthTotals,
-    nextMonth,
+    range,
+    rangeTotals,
+    next,
     openCreate,
     openEdit,
-    prevMonth,
-    resetMonth,
+    prev,
+    reset,
     sections,
     setFilter,
+    setPreset,
+    setRange,
   };
 }

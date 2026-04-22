@@ -6,10 +6,12 @@ import type { RootStackParamList } from '@/app/navigation/types';
 import { useAppSelector } from '@/app/store';
 import type { TransactionKind } from '@/entities/transaction';
 import {
-  currentMonthKey,
-  monthKeyFromDateString,
-  shiftMonth,
-  type MonthKey,
+  currentRange,
+  rangeContainsISO,
+  rangeFromPreset,
+  shiftRange,
+  type DateRange,
+  type RangePreset,
 } from '@/shared/lib';
 
 export type CategorySummary = {
@@ -27,18 +29,17 @@ export function useHome() {
   const locale = useAppSelector((s) => s.settings.locale);
 
   const [kind, setKind] = useState<TransactionKind>('expense');
-  const [monthKey, setMonthKey] = useState<MonthKey>(() => currentMonthKey());
+  const [range, setRange] = useState<DateRange>(() => currentRange('month'));
 
-  const monthItems = useMemo(
-    () =>
-      transactions.filter((t) => monthKeyFromDateString(t.date) === monthKey),
-    [transactions, monthKey]
+  const rangeItems = useMemo(
+    () => transactions.filter((t) => rangeContainsISO(range, t.date)),
+    [transactions, range]
   );
 
   const totals = useMemo(() => {
     let income = 0;
     let expense = 0;
-    for (const t of monthItems) {
+    for (const t of rangeItems) {
       if (t.kind === 'income') {
         income += t.amount;
       } else {
@@ -46,11 +47,11 @@ export function useHome() {
       }
     }
     return { income, expense, balance: income - expense };
-  }, [monthItems]);
+  }, [rangeItems]);
 
   const summaries = useMemo(() => {
     const byCat = new Map<string, CategorySummary>();
-    for (const t of monthItems) {
+    for (const t of rangeItems) {
       if (t.kind !== kind) {
         continue;
       }
@@ -67,7 +68,7 @@ export function useHome() {
       }
     }
     return byCat;
-  }, [monthItems, kind]);
+  }, [rangeItems, kind]);
 
   const visibleCategories = useMemo(
     () => categories.filter((c) => c.kind === kind),
@@ -87,9 +88,9 @@ export function useHome() {
     currency,
     kind,
     locale,
-    monthKey,
-    monthTotals: totals,
-    nextMonth: () => setMonthKey((k) => shiftMonth(k, 1)),
+    range,
+    rangeTotals: totals,
+    next: () => setRange((r) => shiftRange(r, 1)),
     openAllTransactions: () => navigation.navigate('TransactionsList'),
     openCategory: (categoryId: string) =>
       navigation.navigate('CategoryTransactions', { categoryId }),
@@ -100,9 +101,11 @@ export function useHome() {
         categoryId ? { categoryId } : { defaultKind: kind }
       ),
     openManage: () => navigation.navigate('ManageCategories'),
-    prevMonth: () => setMonthKey((k) => shiftMonth(k, -1)),
-    resetMonth: () => setMonthKey(currentMonthKey()),
+    prev: () => setRange((r) => shiftRange(r, -1)),
+    reset: () => setRange((r) => currentRange(r.preset)),
     setKind,
+    setPreset: (preset: RangePreset) => setRange(() => rangeFromPreset(preset)),
+    setRange,
     tiles,
   };
 }
