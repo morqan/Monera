@@ -26,6 +26,7 @@ export function useHome() {
   const categories = useAppSelector((s) => s.categories.items);
   const transactions = useAppSelector((s) => s.transactions.items);
   const budgets = useAppSelector((s) => s.budgets.items);
+  const monthlyLimit = useAppSelector((s) => s.budgets.monthlyLimit);
   const currency = useAppSelector((s) => s.settings.currencyCode);
   const locale = useAppSelector((s) => s.settings.locale);
 
@@ -85,6 +86,13 @@ export function useHome() {
   }, [budgets]);
 
   const showBudgetProgress = kind === 'expense' && range.preset === 'month';
+  const isCurrentMonth =
+    range.preset === 'month' &&
+    range.start.slice(0, 7) === new Date().toISOString().slice(0, 7);
+  const monthlyBudget =
+    isCurrentMonth && monthlyLimit != null && monthlyLimit > 0
+      ? { limit: monthlyLimit, spent: totals.expense }
+      : null;
 
   const tiles = useMemo(
     () =>
@@ -108,6 +116,7 @@ export function useHome() {
     currency,
     kind,
     locale,
+    monthlyBudget,
     range,
     rangeTotals: totals,
     next: () => setRange((r) => shiftRange(r, 1)),

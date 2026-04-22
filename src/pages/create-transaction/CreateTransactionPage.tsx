@@ -13,6 +13,7 @@ import { useTranslation } from '@/shared/i18n';
 
 import { useCreateTransaction } from './model/useCreateTransaction';
 import { createTransactionStyles } from './styles';
+import { AmountField } from './ui/AmountField';
 import { CategoryChips } from './ui/CategoryChips';
 import { DateStepperRow } from './ui/DateStepperRow';
 import { KindSegment } from './ui/KindSegment';
@@ -59,21 +60,13 @@ export function CreateTransactionPage() {
           >
             {t('create.amount')}
           </Text>
-          <View
-            style={[
-              createTransactionStyles.group,
-              { backgroundColor: colors.card, borderColor: colors.border },
-            ]}
-          >
-            <TextInput
-              value={ctx.amountText}
-              onChangeText={ctx.setAmountText}
-              placeholder="0"
-              placeholderTextColor={colors.tertiaryLabel}
-              keyboardType="decimal-pad"
-              style={[createTransactionStyles.input, { color: colors.label }]}
-            />
-          </View>
+          <AmountField
+            value={ctx.amountText}
+            onChange={ctx.setAmountText}
+            colors={colors}
+            currency={ctx.currency}
+            locale={ctx.locale}
+          />
 
           <Text
             style={[

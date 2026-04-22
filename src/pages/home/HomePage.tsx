@@ -25,6 +25,7 @@ import { CategoryTile } from '@/widgets/category-tile';
 import { RangePicker } from '@/widgets/range-picker';
 
 import { useHome } from './model/useHome';
+import { MonthlyBudgetBanner } from './ui/MonthlyBudgetBanner';
 
 export function HomePage() {
   const scheme = useColorScheme();
@@ -35,6 +36,7 @@ export function HomePage() {
     currency,
     kind,
     locale,
+    monthlyBudget,
     range,
     rangeTotals,
     next,
@@ -74,6 +76,16 @@ export function HomePage() {
             currency={currency}
             locale={locale}
           />
+
+          {monthlyBudget ? (
+            <MonthlyBudgetBanner
+              limit={monthlyBudget.limit}
+              spent={monthlyBudget.spent}
+              colors={colors}
+              currency={currency}
+              locale={locale}
+            />
+          ) : null}
 
           <GlassSurface
             colors={colors}

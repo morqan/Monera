@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   ScrollView,
@@ -11,12 +12,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getAppColors, getGlassPanelShadow, theme } from '@/app/styles/theme';
 import { useAppDispatch, useAppSelector } from '@/app/store';
+import { setMonthlyLimit } from '@/entities/budget';
+import { clearPin, setBiometricsEnabled } from '@/entities/security';
 import { patchSettings, type ThemePreference } from '@/entities/settings';
+import { SetupPinModal } from '@/features/app-lock';
 import { useTranslation, type AppLocale } from '@/shared/i18n';
 import {
   buildCsvExport,
   buildJsonExport,
+  getBiometryKind,
   SUPPORTED_CURRENCIES,
+  type BiometryKind,
 } from '@/shared/lib';
 
 const CURRENCY_SYMBOL: Record<string, string> = {
@@ -33,8 +39,10 @@ const CURRENCY_SYMBOL: Record<string, string> = {
 };
 
 import { SettingsActionRow } from './ui/SettingsActionRow';
+import { SettingsInputRow } from './ui/SettingsInputRow';
 import { SettingsRowGroup } from './ui/SettingsRowGroup';
 import { SettingsSelectRow } from './ui/SettingsSelectRow';
+import { SettingsToggleRow } from './ui/SettingsToggleRow';
 
 export function SettingsPage() {
   const scheme = useColorScheme();
@@ -50,6 +58,67 @@ export function SettingsPage() {
   const transactions = useAppSelector((s) => s.transactions.items);
   const categories = useAppSelector((s) => s.categories.items);
   const budgets = useAppSelector((s) => s.budgets.items);
+  const monthlyLimit = useAppSelector((s) => s.budgets.monthlyLimit);
+  const pinHash = useAppSelector((s) => s.security.pinHash);
+  const biometricsEnabled = useAppSelector((s) => s.security.biometricsEnabled);
+
+  const [biometryKind, setBiometryKind] = useState<BiometryKind>('none');
+  const [setupOpen, setSetupOpen] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    getBiometryKind().then((k) => {
+      if (alive) setBiometryKind(k);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const biometryLabel =
+    biometryKind === 'face'
+      ? t('settings.biometryFace')
+      : biometryKind === 'touch'
+      ? t('settings.biometryTouch')
+      : t('settings.biometryNone');
+
+  const confirmDisablePin = () => {
+    Alert.alert(
+      t('settings.pinDisableTitle'),
+      t('settings.pinDisableMessage'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('settings.pinDisableCta'),
+          style: 'destructive',
+          onPress: () => dispatch(clearPin()),
+        },
+      ]
+    );
+  };
+
+  const initialLimitText = useMemo(
+    () =>
+      monthlyLimit != null && monthlyLimit > 0 ? String(monthlyLimit) : '',
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+  const [limitText, setLimitText] = useState(initialLimitText);
+
+  const handleLimitChange = (value: string) => {
+    const normalized = value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
+    setLimitText(normalized);
+    if (normalized.length === 0) {
+      dispatch(setMonthlyLimit(null));
+      return;
+    }
+    const parsed = Number(normalized);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      dispatch(setMonthlyLimit(null));
+      return;
+    }
+    dispatch(setMonthlyLimit(Math.round(parsed * 100) / 100));
+  };
 
   const shareExport = async (payload: string) => {
     try {
@@ -128,6 +197,62 @@ export function SettingsPage() {
         <SettingsRowGroup
           colors={colors}
           shadow={panel}
+          title={t('settings.monthlyBudget')}
+        >
+          <SettingsInputRow
+            colors={colors}
+            value={limitText}
+            onChange={handleLimitChange}
+            placeholder={t('settings.monthlyBudgetPlaceholder')}
+            suffix={currencyCode}
+          />
+        </SettingsRowGroup>
+
+        <SettingsRowGroup
+          colors={colors}
+          shadow={panel}
+          title={t('settings.security')}
+        >
+          <SettingsToggleRow
+            colors={colors}
+            label={t('settings.pinLock')}
+            value={pinHash != null}
+            onChange={(next) => {
+              if (next) {
+                setSetupOpen(true);
+              } else {
+                confirmDisablePin();
+              }
+            }}
+            showDivider
+          />
+          {pinHash != null ? (
+            <SettingsActionRow
+              colors={colors}
+              label={t('settings.pinChange')}
+              onPress={() => setSetupOpen(true)}
+              showDivider
+            />
+          ) : null}
+          <SettingsToggleRow
+            colors={colors}
+            label={biometryLabel}
+            value={biometricsEnabled}
+            disabled={pinHash == null || biometryKind === 'none'}
+            onChange={(next) => dispatch(setBiometricsEnabled(next))}
+            caption={
+              biometryKind === 'none'
+                ? t('settings.biometryUnavailable')
+                : pinHash == null
+                ? t('settings.biometryNeedsPin')
+                : undefined
+            }
+          />
+        </SettingsRowGroup>
+
+        <SettingsRowGroup
+          colors={colors}
+          shadow={panel}
           title={t('settings.theme')}
         >
           <SettingsSelectRow
@@ -164,6 +289,11 @@ export function SettingsPage() {
           </Text>
         </View>
       </ScrollView>
+      <SetupPinModal
+        visible={setupOpen}
+        onClose={() => setSetupOpen(false)}
+        onDone={() => setSetupOpen(false)}
+      />
     </SafeAreaView>
   );
 }

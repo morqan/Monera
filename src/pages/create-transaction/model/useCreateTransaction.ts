@@ -41,10 +41,13 @@ export function useCreateTransaction() {
   const { t } = useTranslation();
   const categories = useAppSelector((s) => s.categories.items);
   const items = useAppSelector((s) => s.transactions.items);
+  const currency = useAppSelector((s) => s.settings.currencyCode);
+  const locale = useAppSelector((s) => s.settings.locale);
 
   const params = route.params;
   const transactionFromRoute = params?.transaction;
   const transactionIdFromRoute = params?.transactionId;
+  const duplicateFromId = params?.duplicateFromId;
 
   const resolved = useMemo(() => {
     if (transactionFromRoute) {
@@ -53,11 +56,18 @@ export function useCreateTransaction() {
     if (transactionIdFromRoute) {
       return items.find((tx) => tx.id === transactionIdFromRoute) ?? null;
     }
+    if (duplicateFromId) {
+      return items.find((tx) => tx.id === duplicateFromId) ?? null;
+    }
     return null;
-  }, [transactionFromRoute, transactionIdFromRoute, items]);
+  }, [transactionFromRoute, transactionIdFromRoute, duplicateFromId, items]);
 
-  const seedKey = resolved?.id ?? 'create';
-  const isEdit = seedKey !== 'create';
+  const isDuplicate =
+    duplicateFromId != null && !transactionIdFromRoute && !transactionFromRoute;
+  const seedKey = isDuplicate
+    ? `dup:${duplicateFromId}`
+    : resolved?.id ?? 'create';
+  const isEdit = !isDuplicate && seedKey !== 'create';
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -97,13 +107,17 @@ export function useCreateTransaction() {
     }
 
     const tx = resolvedRef.current;
-    if (!tx || tx.id !== seedKey) {
+    if (!tx) {
+      return;
+    }
+    const isDup = seedKey.startsWith('dup:');
+    if (!isDup && tx.id !== seedKey) {
       return;
     }
     setKind(tx.kind);
     setAmountText(String(tx.amount));
     setCategoryId(tx.categoryId);
-    setDate(parseISODateOnly(tx.date));
+    setDate(isDup ? startOfLocalDay(new Date()) : parseISODateOnly(tx.date));
     setNote(tx.note);
   }, [seedKey]);
 
@@ -182,6 +196,8 @@ export function useCreateTransaction() {
   }, [resolved, dispatch, navigation, t]);
 
   return {
+    currency,
+    locale,
     kind,
     setKind,
     amountText,

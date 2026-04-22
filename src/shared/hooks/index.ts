@@ -2,4 +2,4 @@
  * Reusable React hooks shared across features.
  */
 
-export {};
+export { useTransactionRowMenu } from './useTransactionRowMenu';

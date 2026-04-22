@@ -5,4 +5,5 @@ export const STORAGE_KEYS = {
   settings: '@monera/settings',
   /** Logged-in user (email only; password is never persisted). */
   sessionUser: '@monera/session-user',
+  security: '@monera/security',
 } as const;

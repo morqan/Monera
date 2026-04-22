@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getAppColors, theme } from '@/app/styles/theme';
+import { useTransactionRowMenu } from '@/shared/hooks';
 import { useTranslation } from '@/shared/i18n';
 import { formatMoney } from '@/shared/lib';
 import { GlassBackground } from '@/shared/ui';
@@ -40,6 +41,7 @@ export function CategoryTransactionsPage() {
     next,
     openCreate,
     openEdit,
+    duplicate,
     openEditCategory,
     prev,
     reset,
@@ -48,10 +50,18 @@ export function CategoryTransactionsPage() {
     setRange,
   } = useCategoryTransactions();
 
+  const showRowMenu = useTransactionRowMenu({
+    onEdit: openEdit,
+    onDuplicate: duplicate,
+  });
+
   const renderItem: SectionListRenderItem<CategoryRow, CategorySection> =
     useCallback(
       ({ item }) => (
-        <Pressable onPress={() => openEdit(item.transaction.id)}>
+        <Pressable
+          onPress={() => openEdit(item.transaction.id)}
+          onLongPress={() => showRowMenu(item.transaction.id)}
+        >
           <TransactionRow
             transaction={item.transaction}
             categoryName={item.categoryName}
@@ -60,7 +70,7 @@ export function CategoryTransactionsPage() {
           />
         </Pressable>
       ),
-      [colors, currency, locale, openEdit]
+      [colors, currency, locale, openEdit, showRowMenu]
     );
 
   const keyExtractor = useCallback(

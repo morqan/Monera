@@ -5,6 +5,8 @@ export type CreateTransactionScreenParams = {
   transactionId?: string;
   /** Снимок транзакции для открытия формы (id сохраняется при сохранении) */
   transaction?: Transaction;
+  /** Префилл полей из транзакции, но сохранение создаёт новую запись */
+  duplicateFromId?: string;
   /** Предвыбранная категория */
   categoryId?: string;
   /** Предвыбранный тип */

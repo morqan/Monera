@@ -172,6 +172,12 @@ export function useTransactionsList() {
     navigation.navigate('CreateTransaction', { transactionId });
   };
 
+  const duplicate = (transactionId: string) => {
+    navigation.navigate('CreateTransaction', {
+      duplicateFromId: transactionId,
+    });
+  };
+
   const prev = () => setRange((r) => shiftRange(r, -1));
   const next = () => setRange((r) => shiftRange(r, 1));
   const reset = () => setRange((r) => currentRange(r.preset));
@@ -191,6 +197,7 @@ export function useTransactionsList() {
     next,
     openCreate,
     openEdit,
+    duplicate,
     prev,
     reset,
     sections,

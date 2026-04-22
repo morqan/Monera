@@ -159,6 +159,10 @@ export function useCategoryTransactions() {
       }),
     openEdit: (transactionId: string) =>
       navigation.navigate('CreateTransaction', { transactionId }),
+    duplicate: (transactionId: string) =>
+      navigation.navigate('CreateTransaction', {
+        duplicateFromId: transactionId,
+      }),
     openEditCategory: () => navigation.navigate('EditCategory', { categoryId }),
   };
 }

@@ -4,18 +4,26 @@ import type { Budget } from './types';
 
 export type BudgetsState = {
   items: Budget[];
+  monthlyLimit: number | null;
+};
+
+export type BudgetsHydratePayload = {
+  items: Budget[];
+  monthlyLimit: number | null;
 };
 
 const initialState: BudgetsState = {
   items: [],
+  monthlyLimit: null,
 };
 
 const budgetsSlice = createSlice({
   name: 'budgets',
   initialState,
   reducers: {
-    hydrateBudgets(state, action: PayloadAction<Budget[]>) {
-      state.items = action.payload;
+    hydrateBudgets(state, action: PayloadAction<BudgetsHydratePayload>) {
+      state.items = action.payload.items;
+      state.monthlyLimit = action.payload.monthlyLimit;
     },
     setBudget(state, action: PayloadAction<Budget>) {
       const { categoryId, limit } = action.payload;
@@ -35,8 +43,13 @@ const budgetsSlice = createSlice({
     clearBudget(state, action: PayloadAction<string>) {
       state.items = state.items.filter((b) => b.categoryId !== action.payload);
     },
+    setMonthlyLimit(state, action: PayloadAction<number | null>) {
+      const value = action.payload;
+      state.monthlyLimit = value != null && value > 0 ? value : null;
+    },
   },
 });
 
-export const { hydrateBudgets, setBudget, clearBudget } = budgetsSlice.actions;
+export const { hydrateBudgets, setBudget, clearBudget, setMonthlyLimit } =
+  budgetsSlice.actions;
 export const budgetsReducer = budgetsSlice.reducer;

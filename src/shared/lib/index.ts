@@ -2,8 +2,11 @@
  * Shared utilities and small pure helpers.
  */
 
+export { authenticateWithBiometry, getBiometryKind } from './biometrics';
+export type { BiometryKind } from './biometrics';
 export { hexToRgba } from './color';
 export { createId } from './createId';
+export { generateSalt, hashPin } from './crypto/hashPin';
 export { buildCsvExport, buildJsonExport } from './exportData';
 export type { ExportBundle } from './exportData';
 export {
