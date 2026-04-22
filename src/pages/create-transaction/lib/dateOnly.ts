@@ -25,7 +25,12 @@ export function parseISODateOnly(iso: string): Date {
 }
 
 export function formatRuDate(date: Date): string {
-  return date.toLocaleDateString('ru-RU', {
+  return formatLocalizedDate(date, 'ru');
+}
+
+export function formatLocalizedDate(date: Date, locale: string): string {
+  const intlLocale = locale === 'ru' ? 'ru-RU' : 'en-US';
+  return date.toLocaleDateString(intlLocale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

@@ -1,15 +1,10 @@
 import { Pressable, Text, useColorScheme, View } from 'react-native';
 
 import { getGlassFabShadow, type AppColors } from '@/app/styles/theme';
+import { useTranslation } from '@/shared/i18n';
 
 import type { TransactionsFilter } from '../model/useTransactionsList';
 import { transactionsListStyles } from '../styles';
-
-const FILTER_OPTIONS: Array<{ value: TransactionsFilter; label: string }> = [
-  { value: 'all', label: 'Все' },
-  { value: 'income', label: 'Доходы' },
-  { value: 'expense', label: 'Расходы' },
-];
 
 type Props = {
   colors: AppColors;
@@ -20,6 +15,13 @@ type Props = {
 export function TransactionsFilterTabs({ colors, value, onChange }: Props) {
   const isDark = useColorScheme() === 'dark';
   const fabShadow = getGlassFabShadow(isDark);
+  const { t } = useTranslation();
+
+  const FILTER_OPTIONS: Array<{ value: TransactionsFilter; label: string }> = [
+    { value: 'all', label: t('transactions.filterAll') },
+    { value: 'income', label: t('transactions.filterIncome') },
+    { value: 'expense', label: t('transactions.filterExpense') },
+  ];
 
   return (
     <View style={transactionsListStyles.filtersWrap}>

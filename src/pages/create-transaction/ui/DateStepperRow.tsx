@@ -1,8 +1,9 @@
 import { Pressable, Text, View } from 'react-native';
 
 import type { AppColors } from '@/app/styles/theme';
+import { useTranslation } from '@/shared/i18n';
 
-import { formatRuDate } from '../lib/dateOnly';
+import { formatLocalizedDate } from '../lib/dateOnly';
 import { createTransactionStyles } from '../styles';
 
 type Props = {
@@ -20,12 +21,13 @@ export function DateStepperRow({
   onToday,
   colors,
 }: Props) {
+  const { t, i18n } = useTranslation();
   return (
     <View
       style={[createTransactionStyles.row, createTransactionStyles.rowPlain]}
     >
       <Text style={[createTransactionStyles.rowLabel, { color: colors.label }]}>
-        Дата
+        {t('create.date')}
       </Text>
       <View style={createTransactionStyles.dateControls}>
         <Pressable
@@ -48,7 +50,7 @@ export function DateStepperRow({
           <Text
             style={[createTransactionStyles.rowValue, { color: colors.accent }]}
           >
-            {formatRuDate(date)}
+            {formatLocalizedDate(date, i18n.language)}
           </Text>
         </Pressable>
         <Pressable

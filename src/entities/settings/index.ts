@@ -1,4 +1,4 @@
-export type { Settings } from './model/types';
+export type { Settings, ThemePreference } from './model/types';
 export {
   defaultSettings,
   hydrateSettings,

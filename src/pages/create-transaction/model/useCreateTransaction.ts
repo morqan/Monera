@@ -22,6 +22,7 @@ import {
   updateTransaction,
   type TransactionKind,
 } from '@/entities/transaction';
+import { useTranslation } from '@/shared/i18n';
 import { createId } from '@/shared/lib';
 
 import {
@@ -37,6 +38,7 @@ export function useCreateTransaction() {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<RootStackParamList, 'CreateTransaction'>>();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const categories = useAppSelector((s) => s.categories.items);
   const items = useAppSelector((s) => s.transactions.items);
 
@@ -49,7 +51,7 @@ export function useCreateTransaction() {
       return transactionFromRoute;
     }
     if (transactionIdFromRoute) {
-      return items.find((t) => t.id === transactionIdFromRoute) ?? null;
+      return items.find((tx) => tx.id === transactionIdFromRoute) ?? null;
     }
     return null;
   }, [transactionFromRoute, transactionIdFromRoute, items]);
@@ -59,9 +61,9 @@ export function useCreateTransaction() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: isEdit ? 'Редактирование' : 'Новая операция',
+      title: isEdit ? t('create.titleEdit') : t('create.titleNew'),
     });
-  }, [navigation, isEdit]);
+  }, [navigation, isEdit, t]);
 
   useEffect(() => {
     if (transactionIdFromRoute && !transactionFromRoute && resolved === null) {
@@ -94,15 +96,15 @@ export function useCreateTransaction() {
       return;
     }
 
-    const t = resolvedRef.current;
-    if (!t || t.id !== seedKey) {
+    const tx = resolvedRef.current;
+    if (!tx || tx.id !== seedKey) {
       return;
     }
-    setKind(t.kind);
-    setAmountText(String(t.amount));
-    setCategoryId(t.categoryId);
-    setDate(parseISODateOnly(t.date));
-    setNote(t.note);
+    setKind(tx.kind);
+    setAmountText(String(tx.amount));
+    setCategoryId(tx.categoryId);
+    setDate(parseISODateOnly(tx.date));
+    setNote(tx.note);
   }, [seedKey]);
 
   const filtered = useMemo(
@@ -130,7 +132,7 @@ export function useCreateTransaction() {
       return;
     }
     if (isEdit && resolved) {
-      const base = items.find((t) => t.id === resolved.id) ?? resolved;
+      const base = items.find((tx) => tx.id === resolved.id) ?? resolved;
       dispatch(
         updateTransaction({
           ...base,
@@ -163,12 +165,12 @@ export function useCreateTransaction() {
     }
     const id = resolved.id;
     Alert.alert(
-      'Удалить операцию?',
-      'Запись будет удалена без возможности восстановления.',
+      t('create.confirmDeleteTitle'),
+      t('create.confirmDeleteMessage'),
       [
-        { text: 'Отмена', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Удалить',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => {
             dispatch(deleteTransaction(id));
@@ -177,7 +179,7 @@ export function useCreateTransaction() {
         },
       ]
     );
-  }, [resolved, dispatch, navigation]);
+  }, [resolved, dispatch, navigation, t]);
 
   return {
     kind,

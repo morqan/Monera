@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { RootStackParamList } from '@/app/navigation/types';
 import { useAppDispatch } from '@/app/store';
 import { setSessionUser } from '@/entities/session';
+import { useTranslation } from '@/shared/i18n';
 import { saveJson, STORAGE_KEYS } from '@/shared/lib';
 import type { SessionUser } from '@/shared/types/sessionUser';
 
@@ -21,15 +22,29 @@ import { getGlassFabShadow, getGlassRowShadow } from '@/app/styles/theme';
 
 import {
   getLoginValidationError,
-  loginValidationMessage,
+  type LoginValidationError,
 } from './lib/validateCredentials';
 import { getLoginPalette, loginStyles } from './styles';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
+function validationKey(code: LoginValidationError): string | null {
+  switch (code) {
+    case 'email':
+      return 'login.validationEmail';
+    case 'password':
+      return 'login.validationPassword';
+    case 'password_weak':
+      return 'login.validationPasswordWeak';
+    default:
+      return null;
+  }
+}
+
 export function LoginPage() {
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +57,8 @@ export function LoginPage() {
   const onSubmit = useCallback(async () => {
     const errCode = getLoginValidationError(email, password);
     if (errCode) {
-      setError(loginValidationMessage(errCode));
+      const key = validationKey(errCode);
+      setError(key ? t(key) : '');
       return;
     }
 
@@ -53,16 +69,16 @@ export function LoginPage() {
     try {
       await saveJson(STORAGE_KEYS.sessionUser, payload);
     } catch {
-      setError('Не удалось сохранить данные. Попробуйте снова.');
+      setError(t('login.errorSave'));
       return;
     }
 
     dispatch(setSessionUser(trimmed));
     navigation.reset({
       index: 0,
-      routes: [{ name: 'TransactionsList' }],
+      routes: [{ name: 'Home' }],
     });
-  }, [dispatch, email, navigation, password]);
+  }, [dispatch, email, navigation, password, t]);
 
   return (
     <SafeAreaView style={[loginStyles.screen, { backgroundColor: palette.bg }]}>
@@ -72,10 +88,10 @@ export function LoginPage() {
       >
         <View style={loginStyles.content}>
           <Text style={[loginStyles.title, { color: palette.label }]}>
-            Вход
+            {t('login.title')}
           </Text>
           <Text style={[loginStyles.subtitle, { color: palette.secondary }]}>
-            Monera
+            {t('login.brand')}
           </Text>
 
           <View
@@ -90,7 +106,7 @@ export function LoginPage() {
           >
             <TextInput
               style={[loginStyles.input, { color: palette.field }]}
-              placeholder="Email"
+              placeholder={t('login.email')}
               placeholderTextColor={palette.placeholder}
               keyboardType="email-address"
               autoCapitalize="none"
@@ -103,7 +119,7 @@ export function LoginPage() {
             />
             <TextInput
               style={[loginStyles.input, { color: palette.field }]}
-              placeholder="Пароль"
+              placeholder={t('login.password')}
               placeholderTextColor={palette.placeholder}
               secureTextEntry
               value={password}
@@ -130,7 +146,7 @@ export function LoginPage() {
             ]}
             onPress={() => {
               onSubmit().catch(() => {
-                setError('Что-то пошло не так.');
+                setError(t('login.errorGeneric'));
               });
             }}
           >
@@ -140,7 +156,7 @@ export function LoginPage() {
                 { color: palette.onAccent },
               ]}
             >
-              Войти
+              {t('login.submit')}
             </Text>
           </Pressable>
         </View>

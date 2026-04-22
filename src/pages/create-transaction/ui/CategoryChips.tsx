@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from 'react-native';
 
 import type { AppColors } from '@/app/styles/theme';
-import type { Category } from '@/entities/category';
+import { useCategoryName, type Category } from '@/entities/category';
 
 import { createTransactionStyles } from '../styles';
 
@@ -13,6 +13,7 @@ type Props = {
 };
 
 export function CategoryChips({ items, selectedId, onSelect, colors }: Props) {
+  const getName = useCategoryName();
   return (
     <View style={createTransactionStyles.chipRow}>
       {items.map((c) => {
@@ -35,7 +36,7 @@ export function CategoryChips({ items, selectedId, onSelect, colors }: Props) {
                 { color: active ? colors.onAccent : colors.label },
               ]}
             >
-              {c.name}
+              {getName(c)}
             </Text>
           </Pressable>
         );

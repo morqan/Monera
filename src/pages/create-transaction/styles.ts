@@ -21,9 +21,9 @@ export const createTransactionStyles = StyleSheet.create({
     marginBottom: theme.space.md,
   },
   fieldLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    letterSpacing: -0.08,
+    fontSize: 11,
+    fontWeight: '500',
+    letterSpacing: 0.4,
     textTransform: 'uppercase',
     marginBottom: theme.space.sm,
     marginLeft: 4,
@@ -34,12 +34,12 @@ export const createTransactionStyles = StyleSheet.create({
   segment: {
     flexDirection: 'row',
     borderRadius: theme.radius.pill,
-    padding: 4,
-    gap: 4,
+    padding: 3,
+    gap: 3,
   },
   segmentItem: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: theme.radius.pill - 2,
     alignItems: 'center',
   },
@@ -47,23 +47,23 @@ export const createTransactionStyles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   segmentLabel: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '500',
   },
   input: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '500',
     paddingHorizontal: theme.space.md,
-    paddingVertical: 14,
-    letterSpacing: -0.5,
+    paddingVertical: 12,
+    letterSpacing: -0.3,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: theme.space.md,
-    paddingVertical: 12,
-    minHeight: 52,
+    paddingVertical: 10,
+    minHeight: 48,
   },
   rowPlain: {
     borderTopWidth: 0,
@@ -74,13 +74,13 @@ export const createTransactionStyles = StyleSheet.create({
     gap: 8,
   },
   caretGlyph: {
-    fontSize: 18,
+    fontSize: 16,
   },
   rowLabel: {
-    fontSize: 17,
+    fontSize: 15,
   },
   rowValue: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '500',
   },
   chipRow: {
@@ -89,20 +89,20 @@ export const createTransactionStyles = StyleSheet.create({
     gap: theme.space.sm,
   },
   chip: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: theme.radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
   },
   chipLabel: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '500',
   },
   note: {
-    minHeight: 100,
-    fontSize: 17,
+    minHeight: 80,
+    fontSize: 15,
     paddingHorizontal: theme.space.md,
-    paddingVertical: 12,
+    paddingVertical: 10,
     textAlignVertical: 'top',
   },
   footer: {
@@ -115,19 +115,19 @@ export const createTransactionStyles = StyleSheet.create({
     paddingBottom: theme.space.sm,
   },
   deleteLabel: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '500',
   },
   save: {
     borderRadius: theme.radius.button,
-    paddingVertical: 16,
+    paddingVertical: 14,
     alignItems: 'center',
   },
   saveBelowDelete: {
     marginTop: theme.space.sm,
   },
   saveLabel: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '600',
   },
   caretBtn: {

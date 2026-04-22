@@ -18,9 +18,26 @@ const categoriesSlice = createSlice({
     hydrateCategories(state, action: PayloadAction<Category[]>) {
       state.items = action.payload;
     },
+    addCategory(state, action: PayloadAction<Category>) {
+      state.items.push(action.payload);
+    },
+    updateCategory(state, action: PayloadAction<Category>) {
+      const idx = state.items.findIndex((c) => c.id === action.payload.id);
+      if (idx >= 0) {
+        state.items[idx] = action.payload;
+      }
+    },
+    deleteCategory(state, action: PayloadAction<string>) {
+      state.items = state.items.filter((c) => c.id !== action.payload);
+    },
   },
 });
 
-export const { hydrateCategories } = categoriesSlice.actions;
+export const {
+  hydrateCategories,
+  addCategory,
+  updateCategory,
+  deleteCategory,
+} = categoriesSlice.actions;
 
 export const categoriesReducer = categoriesSlice.reducer;

@@ -4,5 +4,12 @@ export {
   defaultExpenseCategories,
   defaultIncomeCategories,
 } from './lib/defaultCategories';
-export { categoriesReducer, hydrateCategories } from './model/categoriesSlice';
+export { useCategoryName } from './lib/useCategoryName';
+export {
+  addCategory,
+  categoriesReducer,
+  deleteCategory,
+  hydrateCategories,
+  updateCategory,
+} from './model/categoriesSlice';
 export type { CategoriesState } from './model/categoriesSlice';

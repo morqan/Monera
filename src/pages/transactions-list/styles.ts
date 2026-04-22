@@ -26,7 +26,7 @@ export const transactionsListStyles = StyleSheet.create({
   },
   filterChip: {
     flex: 1,
-    minHeight: 40,
+    minHeight: 34,
     borderRadius: theme.radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
@@ -34,8 +34,8 @@ export const transactionsListStyles = StyleSheet.create({
     paddingHorizontal: theme.space.md,
   },
   filterChipLabel: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '500',
   },
   sectionsList: {
     flex: 1,
@@ -43,16 +43,20 @@ export const transactionsListStyles = StyleSheet.create({
   listContent: {
     paddingBottom: 120,
   },
+  scrollContent: {
+    paddingBottom: 120,
+    flexGrow: 1,
+  },
   sectionHeader: {
     marginBottom: theme.space.sm,
     marginTop: theme.space.xs,
     paddingHorizontal: theme.space.xs,
   },
   sectionHeaderLabel: {
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '500',
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.4,
   },
   fabWrap: {
     position: 'absolute',
@@ -67,8 +71,8 @@ export const transactionsListStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   fabLabel: {
-    fontSize: 28,
-    fontWeight: '400',
+    fontSize: 24,
+    fontWeight: '300',
     marginTop: -2,
   },
   empty: {
@@ -93,30 +97,30 @@ export const transactionsListStyles = StyleSheet.create({
     marginBottom: theme.space.md,
   },
   emptyGlyph: {
-    fontSize: 32,
+    fontSize: 28,
   },
   emptyTitle: {
-    fontSize: 22,
-    fontWeight: '700',
+    fontSize: 17,
+    fontWeight: '600',
     textAlign: 'center',
-    letterSpacing: -0.5,
+    letterSpacing: -0.3,
   },
   emptySubtitle: {
-    fontSize: 15,
+    fontSize: 13,
     textAlign: 'center',
     marginTop: theme.space.sm,
-    lineHeight: 22,
+    lineHeight: 18,
   },
   emptyCta: {
     marginTop: theme.space.lg,
     borderRadius: theme.radius.button,
-    paddingVertical: 14,
+    paddingVertical: 12,
     paddingHorizontal: theme.space.xl,
-    minWidth: 220,
+    minWidth: 200,
     alignItems: 'center',
   },
   emptyCtaLabel: {
-    fontSize: 17,
+    fontSize: 14,
     fontWeight: '600',
   },
 });

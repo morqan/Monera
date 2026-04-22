@@ -5,42 +5,52 @@ import { theme } from '@/app/styles/theme';
 export const transactionRowStyles = StyleSheet.create({
   shell: {
     marginBottom: theme.space.sm,
-    borderRadius: theme.radius.row,
-    borderWidth: StyleSheet.hairlineWidth,
   },
   row: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingVertical: theme.space.md - 2,
     paddingHorizontal: theme.space.md,
   },
   iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 13,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.space.sm + 2,
+    marginRight: theme.space.md,
   },
   iconLabel: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 16,
   },
   meta: {
     flex: 1,
+    minWidth: 0,
+    paddingRight: theme.space.sm,
   },
   title: {
-    fontSize: 17,
-    fontWeight: '600',
-    letterSpacing: -0.41,
+    fontSize: 15,
+    fontWeight: '500',
+    letterSpacing: -0.2,
   },
-  subtitle: {
+  note: {
     fontSize: 13,
-    marginTop: 2,
+    lineHeight: 17,
+    marginTop: 1,
+  },
+  date: {
+    fontSize: 11,
+    fontWeight: '500',
+    marginTop: 3,
+    letterSpacing: 0.1,
   },
   amount: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '600',
-    letterSpacing: -0.41,
+    letterSpacing: -0.2,
+    marginLeft: theme.space.sm,
+    flexShrink: 0,
+    maxWidth: 140,
+    textAlign: 'right',
   },
 });

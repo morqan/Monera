@@ -1,30 +1,35 @@
 import { Pressable, Text, useColorScheme, View } from 'react-native';
 
 import { getGlassPanelShadow, type AppColors } from '@/app/styles/theme';
+import { useTranslation } from '@/shared/i18n';
 
 import { transactionsListStyles } from '../styles';
 
 type Props = {
   colors: AppColors;
-  variant: 'all' | 'filtered';
+  variant: 'all' | 'filtered' | 'month';
   onCreate: () => void;
   onResetFilter?: () => void;
 };
 
-const EMPTY_CONTENT = {
+const EMPTY_META = {
   all: {
     glyph: '✦',
-    title: 'Начните учёт',
-    subtitle:
-      'Добавьте первую операцию — доход или расход. Всё хранится на устройстве.',
-    ctaLabel: 'Новая операция',
+    titleKey: 'transactions.emptyAllTitle',
+    subtitleKey: 'transactions.emptyAllSubtitle',
+    ctaKey: 'transactions.emptyAllCta',
   },
   filtered: {
     glyph: '0',
-    title: 'Ничего не найдено',
-    subtitle:
-      'По выбранному фильтру операций пока нет. Попробуйте показать все записи.',
-    ctaLabel: 'Сбросить фильтр',
+    titleKey: 'transactions.emptyFilteredTitle',
+    subtitleKey: 'transactions.emptyFilteredSubtitle',
+    ctaKey: 'transactions.emptyFilteredCta',
+  },
+  month: {
+    glyph: '◌',
+    titleKey: 'transactions.emptyMonthTitle',
+    subtitleKey: 'transactions.emptyMonthSubtitle',
+    ctaKey: 'transactions.emptyMonthCta',
   },
 } as const;
 
@@ -36,8 +41,9 @@ export function TransactionsEmpty({
 }: Props) {
   const isDark = useColorScheme() === 'dark';
   const panelShadow = getGlassPanelShadow(isDark);
-  const content = EMPTY_CONTENT[variant];
+  const meta = EMPTY_META[variant];
   const action = variant === 'filtered' ? onResetFilter : onCreate;
+  const { t } = useTranslation();
 
   return (
     <View style={transactionsListStyles.empty}>
@@ -63,13 +69,13 @@ export function TransactionsEmpty({
               { color: colors.accent },
             ]}
           >
-            {content.glyph}
+            {meta.glyph}
           </Text>
         </View>
         <Text
           style={[transactionsListStyles.emptyTitle, { color: colors.label }]}
         >
-          {content.title}
+          {t(meta.titleKey)}
         </Text>
         <Text
           style={[
@@ -77,7 +83,7 @@ export function TransactionsEmpty({
             { color: colors.secondaryLabel },
           ]}
         >
-          {content.subtitle}
+          {t(meta.subtitleKey)}
         </Text>
         {action ? (
           <Pressable
@@ -98,7 +104,7 @@ export function TransactionsEmpty({
                 { color: colors.onAccent },
               ]}
             >
-              {content.ctaLabel}
+              {t(meta.ctaKey)}
             </Text>
           </Pressable>
         ) : null}

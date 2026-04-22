@@ -1,6 +1,7 @@
 /**
- * Liquid Glass — все цвета здесь, чтобы менять палитру в одном месте.
- * Яркая энергичная схема: насыщенный «стеклянный» хедер, неоновые акценты.
+ * Monera design tokens — minimal «quiet luxury».
+ * Правило: 1 акцент (violet) + серая шкала + 2 семантических (income/expense).
+ * Вдохновение: Linear · Things 3 · Revolut.
  */
 
 import {
@@ -9,82 +10,91 @@ import {
   type Theme as NavigationTheme,
 } from '@react-navigation/native';
 import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
-import type { ViewStyle } from 'react-native';
+import type { TextStyle, ViewStyle } from 'react-native';
 
 export type AppColors = {
   background: string;
   groupedBackground: string;
   card: string;
+  cardElevated: string;
   border: string;
+  hairline: string;
   label: string;
   secondaryLabel: string;
   tertiaryLabel: string;
   accent: string;
+  accentMuted: string;
   income: string;
   expense: string;
   danger: string;
   fill: string;
   fabRing: string;
-  /** Текст и иконки на заливке accent (кнопки, чипы). */
   onAccent: string;
-  /** Сплошная панель навбара (iOS + Android). */
   headerSurface: string;
-  /** Заголовок в навбаре (inline + large title). */
   headerTitle: string;
-  /** Кнопки «назад» и барные элементы. */
   headerTint: string;
   shadowPanel: string;
   shadowRow: string;
   shadowFab: string;
 };
 
+/** Единственный акцент всего приложения. */
+export const ACCENT = '#7C5CFF';
+export const ACCENT_MUTED = 'rgba(124, 92, 255, 0.16)';
+
 export function getAppColors(isDark: boolean): AppColors {
   if (isDark) {
     return {
-      background: '#050818',
-      groupedBackground: '#0A0F28',
-      card: 'rgba(255, 255, 255, 0.11)',
-      border: 'rgba(130, 210, 255, 0.38)',
-      label: '#FFFFFF',
-      secondaryLabel: 'rgba(220, 240, 255, 0.78)',
-      tertiaryLabel: 'rgba(170, 210, 255, 0.55)',
-      accent: '#00D4FF',
-      income: '#3DFFB4',
-      expense: '#FF5C9A',
-      danger: '#FF5C9A',
-      fill: 'rgba(0, 212, 255, 0.16)',
-      fabRing: 'rgba(255, 255, 255, 0.5)',
-      onAccent: '#041018',
-      headerSurface: '#00B8FF',
-      headerTitle: '#FFFFFF',
-      headerTint: '#B6FFF9',
-      shadowPanel: '#40C4FF',
-      shadowRow: '#00B8FF',
-      shadowFab: '#00E5FF',
+      background: '#0A0A0F',
+      groupedBackground: '#0A0A0F',
+      card: 'rgba(255, 255, 255, 0.06)',
+      cardElevated: 'rgba(255, 255, 255, 0.09)',
+      border: 'rgba(255, 255, 255, 0.08)',
+      hairline: 'rgba(255, 255, 255, 0.06)',
+      label: '#F5F5F7',
+      secondaryLabel: 'rgba(245, 245, 247, 0.64)',
+      tertiaryLabel: 'rgba(245, 245, 247, 0.36)',
+      accent: ACCENT,
+      accentMuted: ACCENT_MUTED,
+      income: '#30D158',
+      expense: '#FF453A',
+      danger: '#FF453A',
+      fill: 'rgba(255, 255, 255, 0.05)',
+      fabRing: 'rgba(255, 255, 255, 0.12)',
+      onAccent: '#FFFFFF',
+      headerSurface: '#0A0A0F',
+      headerTitle: '#F5F5F7',
+      headerTint: ACCENT,
+      shadowPanel: '#000000',
+      shadowRow: '#000000',
+      shadowFab: ACCENT,
     };
   }
 
   return {
-    background: '#DCE6FF',
-    groupedBackground: '#CCD9FF',
-    card: 'rgba(255, 255, 255, 0.72)',
-    border: 'rgba(255, 255, 255, 0.95)',
-    label: '#071229',
-    secondaryLabel: 'rgba(20, 40, 80, 0.68)',
-    tertiaryLabel: 'rgba(50, 70, 120, 0.5)',
-    accent: '#0057FF',
-    income: '#00A356',
-    expense: '#E4005B',
-    danger: '#E4005B',
-    fill: 'rgba(0, 87, 255, 0.14)',
-    fabRing: 'rgba(255, 255, 255, 0.98)',
+    background: '#FAFAFA',
+    groupedBackground: '#F2F2F4',
+    card: '#FFFFFF',
+    cardElevated: '#FFFFFF',
+    border: 'rgba(10, 10, 15, 0.08)',
+    hairline: 'rgba(10, 10, 15, 0.06)',
+    label: '#0A0A0F',
+    secondaryLabel: 'rgba(10, 10, 15, 0.60)',
+    tertiaryLabel: 'rgba(10, 10, 15, 0.38)',
+    accent: ACCENT,
+    accentMuted: 'rgba(124, 92, 255, 0.12)',
+    income: '#1B9A3E',
+    expense: '#E53935',
+    danger: '#E53935',
+    fill: 'rgba(10, 10, 15, 0.04)',
+    fabRing: 'rgba(10, 10, 15, 0.08)',
     onAccent: '#FFFFFF',
-    headerSurface: '#0057FF',
-    headerTitle: '#FFFFFF',
-    headerTint: '#C8F6FF',
-    shadowPanel: '#2B7BFF',
-    shadowRow: '#0066FF',
-    shadowFab: '#0057FF',
+    headerSurface: '#FAFAFA',
+    headerTitle: '#0A0A0F',
+    headerTint: ACCENT,
+    shadowPanel: '#0A0A0F',
+    shadowRow: '#0A0A0F',
+    shadowFab: ACCENT,
   };
 }
 
@@ -95,11 +105,11 @@ export function getNavigationTheme(isDark: boolean): NavigationTheme {
     ...base,
     colors: {
       ...base.colors,
-      primary: c.headerTint,
-      background: c.groupedBackground,
-      card: c.card,
+      primary: c.accent,
+      background: c.background,
+      card: c.headerSurface,
       text: c.label,
-      border: c.border,
+      border: c.hairline,
       notification: c.accent,
     },
   };
@@ -109,8 +119,6 @@ export function getNativeStackScreenOptions(
   isDark: boolean
 ): NativeStackNavigationOptions {
   const c = getAppColors(isDark);
-  const fabShadow = getGlassFabShadow(isDark);
-
   return {
     headerShadowVisible: false,
     headerTintColor: c.headerTint,
@@ -120,63 +128,148 @@ export function getNativeStackScreenOptions(
       color: c.headerTitle,
     },
     headerLargeTitleStyle: {
-      fontSize: 34,
+      fontSize: 28,
       fontWeight: '700',
       color: c.headerTitle,
     },
     headerStyle: {
-      ...fabShadow,
       backgroundColor: c.headerSurface,
     },
   };
 }
 
-/** Стеклянные панели — тени из глобальной палитры. */
 export function getGlassPanelShadow(isDark: boolean): ViewStyle {
-  const c = getAppColors(isDark);
   return {
-    shadowColor: c.shadowPanel,
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: isDark ? 0.45 : 0.28,
-    shadowRadius: 32,
-    elevation: 10,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: isDark ? 0.35 : 0.08,
+    shadowRadius: 24,
+    elevation: 6,
   };
 }
 
 export function getGlassRowShadow(isDark: boolean): ViewStyle {
-  const c = getAppColors(isDark);
   return {
-    shadowColor: c.shadowRow,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: isDark ? 0.28 : 0.18,
-    shadowRadius: 16,
-    elevation: 4,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: isDark ? 0.2 : 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   };
 }
 
 export function getGlassFabShadow(isDark: boolean): ViewStyle {
-  const c = getAppColors(isDark);
   return {
-    shadowColor: c.shadowFab,
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: isDark ? 0.55 : 0.38,
-    shadowRadius: 22,
-    elevation: 14,
+    shadowColor: ACCENT,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: isDark ? 0.4 : 0.25,
+    shadowRadius: 18,
+    elevation: 10,
   };
 }
 
+/** Категориальные цвета — приглушённая Tailwind-шкала. */
+export const CATEGORY_PALETTE = [
+  '#7C5CFF', // violet (акцент)
+  '#3B82F6', // blue
+  '#06B6D4', // cyan
+  '#10B981', // emerald
+  '#F59E0B', // amber
+  '#EF4444', // red
+  '#EC4899', // pink
+  '#8B5CF6', // purple
+  '#14B8A6', // teal
+  '#F97316', // orange
+  '#64748B', // slate
+  '#A855F7', // violet-alt
+  '#22C55E', // green
+  '#0EA5E9', // sky
+  '#D97706', // amber-dark
+  '#94A3B8', // muted
+] as const;
+
 export const theme = {
   radius: {
-    card: 22,
-    row: 18,
-    pill: 14,
-    button: 16,
+    card: 16,
+    row: 14,
+    pill: 12,
+    button: 14,
+    full: 999,
   },
   space: {
-    xs: 6,
-    sm: 10,
-    md: 16,
-    lg: 20,
-    xl: 28,
+    xs: 4,
+    sm: 8,
+    md: 12,
+    lg: 16,
+    xl: 24,
+    xxl: 32,
   },
 } as const;
+
+/** Типографическая шкала — компактная, iOS-native. */
+export const typography = {
+  size: {
+    display: 28,
+    title: 20,
+    headline: 17,
+    body: 15,
+    callout: 14,
+    caption: 12,
+    micro: 11,
+  },
+  weight: {
+    regular: '400',
+    medium: '500',
+    semibold: '600',
+    bold: '700',
+  },
+  lineHeight: {
+    tight: 1.2,
+    normal: 1.35,
+    relaxed: 1.5,
+  },
+} as const;
+
+export const text = {
+  display: {
+    fontSize: typography.size.display,
+    fontWeight: '700',
+    letterSpacing: -0.6,
+  } as TextStyle,
+  title: {
+    fontSize: typography.size.title,
+    fontWeight: '600',
+    letterSpacing: -0.3,
+  } as TextStyle,
+  headline: {
+    fontSize: typography.size.headline,
+    fontWeight: '600',
+    letterSpacing: -0.2,
+  } as TextStyle,
+  body: {
+    fontSize: typography.size.body,
+    fontWeight: '400',
+    letterSpacing: -0.1,
+  } as TextStyle,
+  bodyStrong: {
+    fontSize: typography.size.body,
+    fontWeight: '600',
+    letterSpacing: -0.1,
+  } as TextStyle,
+  callout: {
+    fontSize: typography.size.callout,
+    fontWeight: '500',
+    letterSpacing: -0.1,
+  } as TextStyle,
+  caption: {
+    fontSize: typography.size.caption,
+    fontWeight: '500',
+    letterSpacing: 0,
+  } as TextStyle,
+  micro: {
+    fontSize: typography.size.micro,
+    fontWeight: '500',
+    letterSpacing: 0.2,
+    textTransform: 'uppercase',
+  } as TextStyle,
+};

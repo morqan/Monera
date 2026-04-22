@@ -2,6 +2,7 @@ import { Text, useColorScheme, View } from 'react-native';
 
 import { getGlassRowShadow, type AppColors } from '@/app/styles/theme';
 import type { Transaction } from '@/entities/transaction';
+import { GlassSurface } from '@/shared/ui';
 
 import { transactionRowStyles } from './styles';
 
@@ -18,22 +19,19 @@ export function TransactionRow({
   amountLabel,
   colors,
 }: Props) {
-  const scheme = useColorScheme();
+  const isDark = useColorScheme() === 'dark';
   const isIncome = transaction.kind === 'income';
   const tone = isIncome ? colors.income : colors.expense;
   const prefix = isIncome ? '+' : '−';
-  const rowShadow = getGlassRowShadow(scheme === 'dark');
+  const rowShadow = getGlassRowShadow(isDark);
 
   return (
-    <View
-      style={[
-        transactionRowStyles.shell,
-        rowShadow,
-        {
-          borderColor: colors.border,
-          backgroundColor: colors.card,
-        },
-      ]}
+    <GlassSurface
+      colors={colors}
+      isDark={isDark}
+      variant="row"
+      shadowStyle={rowShadow}
+      style={transactionRowStyles.shell}
     >
       <View style={transactionRowStyles.row}>
         <View
@@ -47,26 +45,40 @@ export function TransactionRow({
           </Text>
         </View>
         <View style={transactionRowStyles.meta}>
-          <Text style={[transactionRowStyles.title, { color: colors.label }]}>
+          <Text
+            style={[transactionRowStyles.title, { color: colors.label }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {categoryName}
           </Text>
+          {transaction.note.trim().length > 0 ? (
+            <Text
+              style={[
+                transactionRowStyles.note,
+                { color: colors.secondaryLabel },
+              ]}
+              numberOfLines={2}
+              ellipsizeMode="tail"
+            >
+              {transaction.note}
+            </Text>
+          ) : null}
           <Text
-            style={[
-              transactionRowStyles.subtitle,
-              { color: colors.secondaryLabel },
-            ]}
+            style={[transactionRowStyles.date, { color: colors.tertiaryLabel }]}
             numberOfLines={1}
           >
-            {transaction.note.trim().length > 0
-              ? transaction.note
-              : transaction.date}
+            {transaction.date}
           </Text>
         </View>
-        <Text style={[transactionRowStyles.amount, { color: tone }]}>
+        <Text
+          style={[transactionRowStyles.amount, { color: tone }]}
+          numberOfLines={1}
+        >
           {prefix}
           {amountLabel}
         </Text>
       </View>
-    </View>
+    </GlassSurface>
   );
 }

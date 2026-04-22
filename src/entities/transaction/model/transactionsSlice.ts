@@ -30,6 +30,18 @@ const transactionsSlice = createSlice({
     deleteTransaction(state, action: PayloadAction<string>) {
       state.items = state.items.filter((t) => t.id !== action.payload);
     },
+    reassignCategory(
+      state,
+      action: PayloadAction<{ fromCategoryId: string; toCategoryId: string }>
+    ) {
+      const { fromCategoryId, toCategoryId } = action.payload;
+      state.items = state.items.map((t) =>
+        t.categoryId === fromCategoryId ? { ...t, categoryId: toCategoryId } : t
+      );
+    },
+    deleteByCategory(state, action: PayloadAction<string>) {
+      state.items = state.items.filter((t) => t.categoryId !== action.payload);
+    },
   },
 });
 
@@ -38,6 +50,8 @@ export const {
   addTransaction,
   updateTransaction,
   deleteTransaction,
+  reassignCategory,
+  deleteByCategory,
 } = transactionsSlice.actions;
 
 export const transactionsReducer = transactionsSlice.reducer;

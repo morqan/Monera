@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAppColors } from '@/app/styles/theme';
+import { useTranslation } from '@/shared/i18n';
 
 import { useCreateTransaction } from './model/useCreateTransaction';
 import { createTransactionStyles } from './styles';
@@ -21,6 +22,7 @@ export function CreateTransactionPage() {
   const scheme = useColorScheme();
   const colors = getAppColors(scheme === 'dark');
   const ctx = useCreateTransaction();
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView
@@ -44,7 +46,7 @@ export function CreateTransactionPage() {
               { color: colors.tertiaryLabel },
             ]}
           >
-            Тип
+            {t('create.kind')}
           </Text>
           <KindSegment kind={ctx.kind} onChange={ctx.setKind} colors={colors} />
 
@@ -55,7 +57,7 @@ export function CreateTransactionPage() {
               { color: colors.tertiaryLabel },
             ]}
           >
-            Сумма
+            {t('create.amount')}
           </Text>
           <View
             style={[
@@ -79,7 +81,7 @@ export function CreateTransactionPage() {
               { color: colors.tertiaryLabel },
             ]}
           >
-            Категория
+            {t('create.category')}
           </Text>
           <CategoryChips
             items={ctx.filteredCategories}
@@ -95,7 +97,7 @@ export function CreateTransactionPage() {
               { color: colors.tertiaryLabel },
             ]}
           >
-            Когда
+            {t('create.when')}
           </Text>
           <View
             style={[
@@ -118,7 +120,7 @@ export function CreateTransactionPage() {
               { color: colors.tertiaryLabel },
             ]}
           >
-            Заметка
+            {t('create.note')}
           </Text>
           <View
             style={[
@@ -129,7 +131,7 @@ export function CreateTransactionPage() {
             <TextInput
               value={ctx.note}
               onChangeText={ctx.setNote}
-              placeholder="Необязательно"
+              placeholder={t('common.optional')}
               placeholderTextColor={colors.tertiaryLabel}
               multiline
               style={[createTransactionStyles.note, { color: colors.label }]}

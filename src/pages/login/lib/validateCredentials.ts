@@ -46,16 +46,3 @@ export function getLoginValidationError(
   }
   return null;
 }
-
-export function loginValidationMessage(code: LoginValidationError): string {
-  switch (code) {
-    case 'email':
-      return 'Введите корректный email.';
-    case 'password':
-      return 'Введите пароль.';
-    case 'password_weak':
-      return 'Пароль: минимум 8 символов, латинские буквы в разном регистре и цифра.';
-    default:
-      return '';
-  }
-}

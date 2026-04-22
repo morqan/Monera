@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from 'react-native';
 
 import type { AppColors } from '@/app/styles/theme';
+import { useTranslation } from '@/shared/i18n';
 
 import { createTransactionStyles } from '../styles';
 
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export function SaveFooter({ canSave, onSave, onDelete, colors }: Props) {
+  const { t } = useTranslation();
   return (
     <View
       style={[
@@ -33,7 +35,7 @@ export function SaveFooter({ canSave, onSave, onDelete, colors }: Props) {
               { color: colors.expense },
             ]}
           >
-            Удалить операцию
+            {t('create.deleteItem')}
           </Text>
         </Pressable>
       ) : null}
@@ -58,7 +60,7 @@ export function SaveFooter({ canSave, onSave, onDelete, colors }: Props) {
             },
           ]}
         >
-          Сохранить
+          {t('common.save')}
         </Text>
       </Pressable>
     </View>
