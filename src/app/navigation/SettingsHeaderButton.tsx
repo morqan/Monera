@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Pressable, StyleSheet, Text, useColorScheme } from 'react-native';
+import { Settings } from 'lucide-react-native';
+import { Pressable, useColorScheme } from 'react-native';
 
 import { getAppColors } from '@/app/styles/theme';
 import { useTranslation } from '@/shared/i18n';
@@ -22,14 +23,7 @@ export function SettingsHeaderButton() {
       accessibilityLabel={t('settings.title')}
       hitSlop={10}
     >
-      <Text style={[styles.glyph, { color: colors.headerTint }]}>⚙︎</Text>
+      <Settings size={20} color={colors.headerTint} strokeWidth={1.75} />
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  glyph: {
-    fontSize: 22,
-    fontWeight: '600',
-  },
-});

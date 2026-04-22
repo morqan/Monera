@@ -1,4 +1,5 @@
-import { Pressable, Text, useColorScheme } from 'react-native';
+import { Plus } from 'lucide-react-native';
+import { Pressable, useColorScheme } from 'react-native';
 
 import { getGlassFabShadow, type AppColors } from '@/app/styles/theme';
 
@@ -29,11 +30,7 @@ export function AddFab({ colors, onPress }: Props) {
       accessibilityRole="button"
       accessibilityLabel="Добавить операцию"
     >
-      <Text
-        style={[transactionsListStyles.fabLabel, { color: colors.onAccent }]}
-      >
-        +
-      </Text>
+      <Plus size={24} color={colors.onAccent} strokeWidth={2} />
     </Pressable>
   );
 }

@@ -1,3 +1,4 @@
+import { ChevronRight } from 'lucide-react-native';
 import { useMemo } from 'react';
 import {
   Pressable,
@@ -142,7 +143,11 @@ function CategoryRowItem({
         >
           {name}
         </Text>
-        <Text style={[styles.chevron, { color: colors.tertiaryLabel }]}>›</Text>
+        <ChevronRight
+          size={18}
+          color={colors.tertiaryLabel}
+          strokeWidth={1.75}
+        />
       </Pressable>
     </GlassSurface>
   );
@@ -188,10 +193,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '500',
-  },
-  chevron: {
-    fontSize: 18,
-    fontWeight: '300',
   },
   addBtn: {
     marginTop: theme.space.lg,

@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { Pressable, Text, View } from 'react-native';
 
 import type { AppColors } from '@/app/styles/theme';
@@ -37,14 +38,7 @@ export function DateStepperRow({
             { backgroundColor: colors.fill, opacity: pressed ? 0.7 : 1 },
           ]}
         >
-          <Text
-            style={[
-              createTransactionStyles.caretGlyph,
-              { color: colors.label },
-            ]}
-          >
-            ‹
-          </Text>
+          <ChevronLeft size={16} color={colors.label} strokeWidth={1.75} />
         </Pressable>
         <Pressable onPress={onToday}>
           <Text
@@ -60,14 +54,7 @@ export function DateStepperRow({
             { backgroundColor: colors.fill, opacity: pressed ? 0.7 : 1 },
           ]}
         >
-          <Text
-            style={[
-              createTransactionStyles.caretGlyph,
-              { color: colors.label },
-            ]}
-          >
-            ›
-          </Text>
+          <ChevronRight size={16} color={colors.label} strokeWidth={1.75} />
         </Pressable>
       </View>
     </View>

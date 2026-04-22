@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import {
   Pressable,
   StyleSheet,
@@ -43,7 +44,7 @@ export function MonthSwitcher({
         <Arrow
           colors={colors}
           onPress={onPrev}
-          glyph="‹"
+          direction="prev"
           a11y={t('transactions.prevMonth')}
         />
         <Pressable
@@ -63,7 +64,7 @@ export function MonthSwitcher({
         <Arrow
           colors={colors}
           onPress={onNext}
-          glyph="›"
+          direction="next"
           a11y={t('transactions.nextMonth')}
         />
       </View>
@@ -74,14 +75,15 @@ export function MonthSwitcher({
 function Arrow({
   colors,
   onPress,
-  glyph,
+  direction,
   a11y,
 }: {
   colors: AppColors;
   onPress: () => void;
-  glyph: string;
+  direction: 'prev' | 'next';
   a11y: string;
 }) {
+  const Icon = direction === 'prev' ? ChevronLeft : ChevronRight;
   return (
     <Pressable
       onPress={onPress}
@@ -97,7 +99,7 @@ function Arrow({
       ]}
       hitSlop={8}
     >
-      <Text style={[styles.arrowGlyph, { color: colors.label }]}>{glyph}</Text>
+      <Icon size={18} color={colors.label} strokeWidth={1.75} />
     </Pressable>
   );
 }
@@ -136,10 +138,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-  },
-  arrowGlyph: {
-    fontSize: 18,
-    fontWeight: '500',
-    marginTop: -2,
   },
 });
