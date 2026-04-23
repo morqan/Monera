@@ -1,7 +1,14 @@
 module.exports = {
   root: true,
   extends: '@react-native',
-  ignorePatterns: ['android/', 'ios/', '**/Pods/**', '.bundle/', 'vendor/'],
+  ignorePatterns: [
+    'android/',
+    'ios/',
+    '**/Pods/**',
+    '.bundle/',
+    'vendor/',
+    'scripts/',
+  ],
   rules: {
     'no-duplicate-imports': 'warn',
     'react-hooks/exhaustive-deps': 'warn',

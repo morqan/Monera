@@ -5,6 +5,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import BootSplash from 'react-native-bootsplash';
 import { getAppColors } from '@/app/styles/theme';
 import { bootstrapApp, markStoreHydrated, useAppDispatch } from '@/app/store';
 
@@ -23,10 +24,12 @@ export function StoreGate({ children }: PropsWithChildren) {
         /* ignore: keep empty / defaults */
       })
       .finally(() => {
-        if (active) {
-          markStoreHydrated();
-          setReady(true);
-        }
+        if (!active) return;
+        markStoreHydrated();
+        setReady(true);
+        BootSplash.hide({ fade: true }).catch(() => {
+          /* best-effort */
+        });
       });
 
     return () => {
