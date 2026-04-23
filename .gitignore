@@ -26,6 +26,10 @@ DerivedData
 #
 build/
 .idea
+.agents/
+.claude/
+.cursor/
+skills-lock.json
 .gradle
 local.properties
 *.iml
